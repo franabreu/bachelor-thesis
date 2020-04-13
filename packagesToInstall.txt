@@ -1,0 +1,5 @@
+npm install react-navigation react-navigation-stack react-navigation-tabs react-native-datepicker react-native-elements
+ react-native-gesture-handler react-native-screens react-native-safe-area-context eact-native-vector-icons
+ @react-native-community/masked-view react-native-datepicker
+
+npm install @react-native-firebase/firestore npm install @react-native-firebase/app
