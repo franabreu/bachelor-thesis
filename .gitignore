@@ -57,3 +57,6 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+
+#Config files for Firebase
+resources/serviceAccount.json
