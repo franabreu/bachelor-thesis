@@ -30,6 +30,7 @@ export default class RegisterForm extends React.Component {
     state = {
         title: "",
         description: "",
+        city: "",
         startDate: new Date(),
         endDate: new Date(),
         public: false,
@@ -41,6 +42,7 @@ export default class RegisterForm extends React.Component {
         var data = {
             title: this.state.title,
             description: this.state.description,
+            city: this.state.city,
             startDate: this.state.startDate,
             endDate: this.state.endDate,
             public: this.state.public,
@@ -90,6 +92,15 @@ export default class RegisterForm extends React.Component {
                                 autoCapitalize='none'
                                 onChangeText={description => this.setState({ description })}
                                 value={this.state.description}>
+                            </TextInput>
+                        </View>
+
+                        <View>
+                            <Text style={styles.inputTitle}>Ciudad</Text>
+                            <TextInput style={styles.textInput}
+                                autoCapitalize='none'
+                                onChangeText={city => this.setState({ city })}
+                                value={this.state.city}>
                             </TextInput>
                         </View>
 
