@@ -53,7 +53,7 @@ export default class RegisterForm extends React.Component {
     }
 
     checkBoxPressed = () => {
-        if (this.state.trip.public == true) {
+        if (this.state.public == true) {
             this.setState({ public: false })
         } else {
             this.setState({ public: true })

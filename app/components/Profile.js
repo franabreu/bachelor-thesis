@@ -3,7 +3,9 @@ import {
   StyleSheet,
   View,
   Text,
-  StatusBar
+  StatusBar,
+  LayoutAnimation,
+  TouchableOpacity
 } from 'react-native';
 
 /* import * as firebase from 'firebase';
@@ -18,14 +20,32 @@ export default class Profile extends React.Component {
     };
 
     state = {
+        email: "",
+        displayName: ""
+    }
+
+    componentDidMount() {
+        const {email, displayName} = firebase.auth().currentUser;
+
+        this.setState({email, displayName});
+    }
+
+    signOut = () => {
+        firebase.auth().signOut();
     }
 
     render() {
+        LayoutAnimation.easeInEaseOut();
+
         return (
             <View style={styles.container}>
                 <StatusBar barStyle='light-content'></StatusBar>
 
-                <Text>Mi perfil</Text>
+                <Text>¡Hola, {this.state.displayName}!</Text>
+
+                <TouchableOpacity style={{marginTop: 32}} onPress={this.signOut}>
+                    <Text>Cerrar sesión</Text>
+                </TouchableOpacity>
             </View>
         )
     }
