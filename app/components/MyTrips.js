@@ -42,7 +42,7 @@ class TripList extends Component {
         return this.state.tripList.length > 0 ?
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Próximos destinos</Text>
+                    <Text style={styles.headerTitle}>Mis viajes</Text>
                 </View>
                 <FlatList
                     data={this.state.tripList}

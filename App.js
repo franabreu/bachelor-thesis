@@ -15,6 +15,10 @@ import {
   createBottomTabNavigator
 } from 'react-navigation-tabs';
 
+/* import Icon from 'react-native-ionicons'
+ */
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import Home from './app/components/Home';
 import LoadingScreen from './app/components/LoadingScreen';
 import LoginForm from './app/components/LoginForm';
@@ -61,20 +65,29 @@ const AppStack = createStackNavigator ({
 
 const AppTabNavigator = createBottomTabNavigator (
   {
-    Inicio: {
-      screen: Home
-    },
-    Viajes: {
-      screen: TripList
+    MisViajes: {
+      screen: MyTrips,
+      navigationOptions: {
+        tabBarIcon: ({tintColor}) => <Icon name="home" size={24} color={tintColor}/>
+      }
     },
     Crear: {
-      screen: TripForm
+      screen: TripForm,
+      navigationOptions: {
+        tabBarIcon: ({tintColor}) => <Icon name="add-circle" size={24} color={tintColor}/>
+      }
     },
-    MisViajes: {
-      screen: MyTrips
+    Viajes: {
+      screen: TripList,
+      navigationOptions: {
+        tabBarIcon: ({tintColor}) => <Icon name="explore" size={24} color={tintColor}/>
+      }
     },
     Perfil: {
-      screen: Profile
+      screen: Profile,
+      navigationOptions: {
+        tabBarIcon: ({tintColor}) => <Icon name="person" size={24} color={tintColor}/>
+      }
     }
   },
   {
