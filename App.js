@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {YellowBox} from 'react-native';
+import { YellowBox } from 'react-native';
 
 import {
   createAppContainer,
@@ -25,6 +25,7 @@ import LoginForm from './app/components/LoginForm';
 import RegisterForm from './app/components/RegisterForm';
 
 import TripList from './app/components/TripList';
+import Trip from './app/components/Trip';
 import TripForm from './app/components/TripForm';
 import MyTrips from './app/components/MyTrips';
 import Profile from './app/components/Profile';
@@ -59,34 +60,46 @@ if (!global.atob) { global.atob = decode; } */
 // Ignores the warning of a deprecated method thar will be added back
 /* YellowBox.ignoreWarnings(['-[RCTRootView cancelTouches]', 'Animated: `useNativeDriver`']);
  */
-const AppStack = createStackNavigator ({
-  Home: Home
+
+const TripStack = createStackNavigator({
+  MyTrips: {
+    screen: MyTrips,
+    navigationOptions: {
+      headerShown: false
+  },
+  },
+  Trip: {
+    screen: Trip,
+    navigationOptions: {
+      headerShown: false
+  },
+  }
 })
 
-const AppTabNavigator = createBottomTabNavigator (
+const AppTabNavigator = createBottomTabNavigator(
   {
     MisViajes: {
-      screen: MyTrips,
+      screen: TripStack,
       navigationOptions: {
-        tabBarIcon: ({tintColor}) => <Icon name="home" size={24} color={tintColor}/>
+        tabBarIcon: ({ tintColor }) => <Icon name="home" size={24} color={tintColor} />
       }
     },
     Crear: {
       screen: TripForm,
       navigationOptions: {
-        tabBarIcon: ({tintColor}) => <Icon name="add-circle" size={24} color={tintColor}/>
+        tabBarIcon: ({ tintColor }) => <Icon name="add-circle" size={24} color={tintColor} />
       }
     },
     Viajes: {
       screen: TripList,
       navigationOptions: {
-        tabBarIcon: ({tintColor}) => <Icon name="explore" size={24} color={tintColor}/>
+        tabBarIcon: ({ tintColor }) => <Icon name="explore" size={24} color={tintColor} />
       }
     },
     Perfil: {
       screen: Profile,
       navigationOptions: {
-        tabBarIcon: ({tintColor}) => <Icon name="person" size={24} color={tintColor}/>
+        tabBarIcon: ({ tintColor }) => <Icon name="person" size={24} color={tintColor} />
       }
     }
   },
@@ -100,10 +113,10 @@ const AppTabNavigator = createBottomTabNavigator (
   }
 )
 
-const AuthStack = createStackNavigator ({
+const AuthStack = createStackNavigator({
   Login: LoginForm,
   Register: RegisterForm
-})  
+})
 
 export default createAppContainer(
   createSwitchNavigator(
