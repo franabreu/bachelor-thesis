@@ -3,21 +3,20 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text } from 'react-native';
 
 import { getMyTrips } from '../server/TripsAPI';
 
-/* import * as firebase from 'firebase';
-import 'firebase/firestore'; */
-
 import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
 import "@react-native-firebase/firestore";
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function Item({ title, description }) {
+function Item({ title, description, navigation }) {
     return (
-        <View style={styles.item}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>{description}</Text>
-        </View>
+        <TouchableOpacity onPress={() => navigation.navigate('Trip'/* , {tripID: this.state.tripID} */) }>
+            <View style={styles.item}>
+                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.description}>{description}</Text>
+            </View>
+        </TouchableOpacity>
     );
 }
 
@@ -46,7 +45,7 @@ class TripList extends Component {
                 </View>
                 <FlatList
                     data={this.state.tripList}
-                    renderItem={({ item }) => <Item style={styles.item} title={item.title} description={item.description} />}
+                    renderItem={({ item }) => <Item style={styles.item} title={item.title} description={item.description} navigation={this.props.navigation} />}
                     keyExtractor={item => item.id}
                 />
             </SafeAreaView> :
@@ -60,7 +59,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: 'white',
     },
     header: {
         paddingTop: 16,
