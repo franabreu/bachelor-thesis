@@ -9,9 +9,9 @@ import "@react-native-firebase/firestore";
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function Item({ title, description, navigation }) {
+function Item({ tripID, title, description, navigation }) {
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('Trip'/* , {tripID: this.state.tripID} */) }>
+        <TouchableOpacity onPress={() => navigation.navigate('Trip', {tripID: tripID}) }>
             <View style={styles.item}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.description}>{description}</Text>
@@ -45,7 +45,11 @@ class TripList extends Component {
                 </View>
                 <FlatList
                     data={this.state.tripList}
-                    renderItem={({ item }) => <Item style={styles.item} title={item.title} description={item.description} navigation={this.props.navigation} />}
+                    renderItem={({ item }) => <Item style={styles.item} 
+                        tripID={item.id}
+                        title={item.title} 
+                        description={item.description} 
+                        navigation={this.props.navigation} />}
                     keyExtractor={item => item.id}
                 />
             </SafeAreaView> :
