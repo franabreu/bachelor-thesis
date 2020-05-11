@@ -58,8 +58,8 @@ if (!global.btoa) { global.btoa = encode; }
 if (!global.atob) { global.atob = decode; } */
 
 // Ignores the warning of a deprecated method thar will be added back
-/* YellowBox.ignoreWarnings(['-[RCTRootView cancelTouches]', 'Animated: `useNativeDriver`']);
- */
+YellowBox.ignoreWarnings(['VirtualizedLists should never be nested inside plain ScrollViews', 'Animated: `useNativeDriver`']);
+
 
 const TripStack = createStackNavigator({
   MyTrips: {

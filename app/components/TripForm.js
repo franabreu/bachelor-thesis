@@ -8,10 +8,12 @@ import {
     StatusBar
 } from 'react-native';
 
-import { CheckBox } from 'react-native-elements'
+import { CheckBox, SearchBar } from 'react-native-elements'
 
 /* import DatePicker from 'react-native-datepicker' */
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 import { uploadTrip } from '../server/TripsAPI';
 
@@ -21,6 +23,14 @@ import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
 import "@react-native-firebase/firestore";
 import { ScrollView } from 'react-native-gesture-handler';
+
+function City({ name }) {
+    return (
+        <View >
+            <Text>{name}</Text>
+        </View>
+    );
+}
 
 export default class RegisterForm extends React.Component {
     static navigationOptions = {
@@ -35,7 +45,8 @@ export default class RegisterForm extends React.Component {
         endDate: new Date(),
         public: false,
         userID: '',
-        errorMessage: null
+        errorMessage: null,
+        searchText: null
     }
 
     handleSubmit = () => {
@@ -62,7 +73,8 @@ export default class RegisterForm extends React.Component {
 
     render() {
         return (
-            <ScrollView>
+            <ScrollView
+                keyboardShouldPersistTaps='always'>
                 <View style={StyleSheet.container}>
                     <StatusBar barStyle='light-content'></StatusBar>
 
@@ -97,11 +109,78 @@ export default class RegisterForm extends React.Component {
 
                         <View>
                             <Text style={styles.inputTitle}>Ciudad</Text>
-                            <TextInput style={styles.textInput}
-                                autoCapitalize='none'
-                                onChangeText={city => this.setState({ city })}
-                                value={this.state.city}>
-                            </TextInput>
+
+                            <GooglePlacesAutocomplete
+                                placeholder='Buscar ciudad...'
+                                minLength={2} // minimum length of text to search
+                                autoFocus={false}
+                                returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
+                                keyboardAppearance={'light'} // Can be left out for default keyboardAppearance https://facebook.github.io/react-native/docs/textinput.html#keyboardappearance
+                                listViewDisplayed='auto' // true/false/undefined
+                                listViewDisplayed={false}
+                                renderDescription={(row) => row.description} // custom description render
+                                onPress={(data, details = null) => {
+                                    // 'details' is provided when fetchDetails = true
+                                    this.setState({ city: data.description })
+                                }}
+                                getDefaultValue={() => ''}
+                                query={{
+                                    // available options: https://developers.google.com/places/web-service/autocomplete
+                                    key: 'AIzaSyCH-g4oifQVp00IVDnvgFHwKALejOaY3HU',
+                                    language: 'es', // language of the results
+                                    types: '(cities)', // default: 'geocode'
+                                }}
+                                styles={{
+                                    textInputContainer: {
+                                        backgroundColor: 'white',
+                                        marginBottom: 20,
+                                        paddingLeft: 20,
+                                        paddingRight: 20,
+                                        paddingVertical: 0,
+                                        width: '100%',
+                                        borderTopWidth: 0,
+                                        borderBottomWidth: 0,
+                                    },
+                                    textInput: {
+                                        marginLeft: 0,
+                                        marginRight: 0,
+                                        height: 38,
+                                        color: '#5d5d5d',
+                                        fontSize: 16,
+                                    },
+                                    description: {
+                                        fontWeight: 'bold',
+                                    },
+                                    predefinedPlacesDescription: {
+                                        color: '#1faadb',
+                                    },
+                                }}
+                                currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
+                                currentLocationLabel='Current location'
+                                nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
+                                GoogleReverseGeocodingQuery={
+                                    {
+                                        // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
+                                    }
+                                }
+                                GooglePlacesSearchQuery={{
+                                    // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
+                                    rankby: 'distance',
+                                    type: 'cafe',
+                                }}
+                                GooglePlacesDetailsQuery={{
+                                    // available options for GooglePlacesDetails API : https://developers.google.com/places/web-service/details
+                                    fields: 'formatted_address',
+                                }}
+                                filterReverseGeocodingByTypes={[
+                                    'locality',
+                                    'administrative_area_level_3',
+                                ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
+                                debounce={200} // debounce the requests in ms. Set to 0 to remove debounce. By default 0ms.
+                                enablePoweredByContainer={false}
+                            />
+
+                            {/* <Text>{this.state.city}</Text> */}
                         </View>
 
                         <View>
@@ -220,5 +299,8 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
         borderBottomWidth: 0
+    },
+    searchBar: {
+        backgroundColor: 'white',
     },
 });

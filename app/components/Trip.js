@@ -1,11 +1,12 @@
 import React from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-  LayoutAnimation,
-  TouchableOpacity
+    StyleSheet,
+    View,
+    Text,
+    StatusBar,
+    LayoutAnimation,
+    TouchableOpacity,
+    SafeAreaView
 } from 'react-native';
 
 /* import moment from 'moment' */
@@ -17,8 +18,9 @@ import "@react-native-firebase/firestore";
 import { getTripById } from '../server/TripsAPI';
 
 var moment = require('moment');
+
 export default class Trip extends React.Component {
-    
+
     static navigationOptions = {
         headerShown: false
     };
@@ -52,26 +54,66 @@ export default class Trip extends React.Component {
         LayoutAnimation.easeInEaseOut();
 
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <StatusBar barStyle='light-content'></StatusBar>
 
-                <Text>Título: {this.state.trip.title}</Text>
-                <Text>Descripcion: {this.state.trip.description}</Text>
-                <Text>Ciudad: {this.state.trip.city}</Text>
-                <Text>Salida: {this.state.startDate}</Text>
-                <Text>Salida: {this.state.endDate}</Text>
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>{this.state.trip.title}</Text>
+                </View>
+
+
+                <Text style={styles.description}>{this.state.trip.description}</Text>
+                <Text style={styles.cities}>Ciudad: {this.state.trip.city}</Text>
+                <View style={styles.dates}>
+                    <Text style={styles.date}>Salida: {this.state.startDate}</Text>
+                    <Text style={styles.date}>Llegada: {this.state.endDate}</Text>
+                </View>
 
 
 
-            </View>
+            </SafeAreaView>
         )
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center'
+        flex: 1,
+        alignItems: 'center',
+        backgroundColor: 'white'
+    },
+    header: {
+        paddingTop: 16,
+        paddingBottom: 16,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        borderBottomWidth: 1,
+        borderBottomColor: 'blue',
+        zIndex: 10
+    },
+    headerTitle: {
+        fontSize: 28,
+        fontWeight: '500'
+    },
+    description: {
+        paddingTop: 16,
+        paddingBottom: 16,
+        fontSize: 18,
+        fontWeight: '500'
+    },
+    cities: {
+        paddingTop: 16,
+        paddingBottom: 16,
+        fontSize: 18,
+        fontWeight: '500'
+    },
+    dates: {
+        paddingTop: 16,
+        paddingBottom: 16,
+    },
+    date: {
+        fontSize: 18,
+        fontWeight: '500'
     }
 });
