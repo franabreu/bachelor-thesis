@@ -70,7 +70,6 @@ export async function getTripById(tripID, tripRetreived) {
 
   docRef.get().then(function (doc) {
     if (doc.exists) {
-      console.log("Document data:", doc.data());
       tripRetreived(doc.data())
     } else {
       // doc.data() will be undefined in this case
