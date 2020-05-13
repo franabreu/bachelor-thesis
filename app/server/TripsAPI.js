@@ -32,7 +32,6 @@ export async function getMyTrips(tripsRetreived) {
 
   var tripList = [];
   var userID = firebase.auth().currentUser.uid;
-  console.log('UserID: ' + userID);
 
   var snapshot = await firebase.firestore()
     .collection('trip')

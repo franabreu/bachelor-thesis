@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text } from 'react-native';
 
+import { NavigationEvents } from "react-navigation";
+
 import { getMyTrips } from '../server/TripsAPI';
 
 import firebase from '@react-native-firebase/app';
@@ -11,7 +13,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function Item({ tripID, title, description, navigation }) {
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('Trip', {tripID: tripID}) }>
+        <TouchableOpacity onPress={() => navigation.navigate('Trip', { tripID: tripID })}>
             <View style={styles.item}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.description}>{description}</Text>
@@ -34,7 +36,9 @@ class TripList extends Component {
     }
 
     componentDidMount() {
-        getMyTrips(this.onTripsReceived);
+        this._navListener = this.props.navigation.addListener('didFocus', () => {
+            getMyTrips(this.onTripsReceived);
+        });
     }
 
     render() {
@@ -45,10 +49,10 @@ class TripList extends Component {
                 </View>
                 <FlatList
                     data={this.state.tripList}
-                    renderItem={({ item }) => <Item style={styles.item} 
+                    renderItem={({ item }) => <Item style={styles.item}
                         tripID={item.id}
-                        title={item.title} 
-                        description={item.description} 
+                        title={item.title}
+                        description={item.description}
                         navigation={this.props.navigation} />}
                     keyExtractor={item => item.id}
                 />

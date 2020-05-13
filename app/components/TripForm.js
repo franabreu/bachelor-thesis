@@ -15,6 +15,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
+import ValidationComponent from 'react-native-form-validator';
+
 import { uploadTrip } from '../server/TripsAPI';
 
 /* import * as firebase from 'firebase'; */
@@ -32,10 +34,12 @@ function City({ name }) {
     );
 }
 
-export default class RegisterForm extends React.Component {
+export default class RegisterForm extends ValidationComponent {
     static navigationOptions = {
         headerShown: false
     };
+
+    deviceLocale="es"
 
     state = {
         title: "",
@@ -50,6 +54,7 @@ export default class RegisterForm extends React.Component {
     }
 
     handleSubmit = () => {
+
         var data = {
             title: this.state.title,
             description: this.state.description,
@@ -59,8 +64,19 @@ export default class RegisterForm extends React.Component {
             public: this.state.public,
             userID: firebase.auth().currentUser.uid,
         }
-        /* var data = this.state.trip */
-        uploadTrip(data);
+
+        this.validate({
+            title: {minlength:2, maxlength:20, required: true},
+            description: {minlength:3, maxlength:200, required: true},
+            city: {minlength:3, maxlength:30, required: true},
+            startDate: {required: true},
+            endDate: {required: true},
+        });
+
+        if (this.isFormValid()) {
+            uploadTrip(data);
+            this.props.navigation.navigate('MyTrips');
+        }
     }
 
     checkBoxPressed = () => {
@@ -211,6 +227,10 @@ export default class RegisterForm extends React.Component {
                                 onPress={() => this.checkBoxPressed()}
                             />
                         </View>
+
+                        <Text style={styles.error}>
+                            {this.getErrorMessages()}
+                        </Text>
 
                         <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
                             <Text style={styles.buttonText}>Crear</Text>
