@@ -36,7 +36,7 @@ export async function getMyTrips(tripsRetreived) {
   var snapshot = await firebase.firestore()
     .collection('trip')
     .where('userID', '==', userID)
-    .orderBy('title')
+    .orderBy('startDate', 'desc')
     .get()
 
   snapshot.forEach((doc) => {
