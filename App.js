@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { YellowBox } from 'react-native';
+import { YellowBox, AsyncStorage } from 'react-native';
 
 import {
   createAppContainer,
@@ -60,6 +60,10 @@ if (!global.atob) { global.atob = decode; } */
 // Ignores the warning of a deprecated method thar will be added back
 YellowBox.ignoreWarnings(['VirtualizedLists should never be nested inside plain ScrollViews', 'Animated: `useNativeDriver`']);
 
+/* if(__DEV__) {
+  import('./ReactotronConfig.js').then(() => console.log('Reactotron Configured'))
+} */
+
 
 const TripStack = createStackNavigator({
   MyTrips: {
@@ -78,7 +82,7 @@ const TripStack = createStackNavigator({
 
 const AppTabNavigator = createBottomTabNavigator(
   {
-    MisViajes: {
+    Inicio: {
       screen: TripStack,
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="home" size={24} color={tintColor} />
