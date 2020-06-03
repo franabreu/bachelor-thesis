@@ -37,8 +37,8 @@ export default class Trip extends React.Component {
             trip: prevState.trip = trip
         }))
         this.setState({
-            startDate: moment(trip.startDate._seconds).locale('es').format('LL'),
-            endDate: moment(trip.endDate._seconds).locale('es').format('LL')
+            startDate: moment(trip.startDate.toDate()).locale('es').format('LL'),
+            endDate: moment(trip.endDate.toDate()).locale('es').format('LL')
         });
     }
 
@@ -69,7 +69,9 @@ export default class Trip extends React.Component {
                     <Text style={styles.date}>Llegada: {this.state.endDate}</Text>
                 </View>
 
-
+                <TouchableOpacity style={styles.expensesButton} onPress={() => navigation.navigate('Trip', { tripID: tripID })}>
+                    <Text>Gastos</Text>
+                </TouchableOpacity>
 
             </SafeAreaView>
         )
@@ -115,5 +117,13 @@ const styles = StyleSheet.create({
     date: {
         fontSize: 18,
         fontWeight: '500'
-    }
+    },
+    expensesButton: {
+        marginHorizontal: 20,
+        backgroundColor: '#3399ff',
+        borderRadius: 4,
+        height: 42,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
 });
