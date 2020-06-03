@@ -44,8 +44,9 @@ export async function getMyTrips(tripsRetreived) {
     tripItem.id = doc.id;
     tripItem.title = doc.data().title;
     tripItem.description = doc.data().description;
-    tripItem.startDate = doc.data().startDate;
-    tripItem.endDate = doc.data().endDate;
+    tripItem.startDate = doc.data().startDate.toDate();
+    tripItem.endDate = doc.data().endDate.toDate();
+
     tripList.push(tripItem);
   });
 

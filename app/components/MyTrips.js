@@ -11,12 +11,19 @@ import "@react-native-firebase/firestore";
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function Item({ tripID, title, description, navigation }) {
+import 'moment/locale/es'
+var moment = require('moment');
+
+function Item({ tripID, title, description, startDate, endDate, navigation }) {
+    moment.locale('es');
+    var startDateFormatted = moment(startDate).locale('es').format('LL');
+    var endDateFormatted = moment(endDate).locale('es').format('LL');
+
     return (
         <TouchableOpacity onPress={() => navigation.navigate('Trip', { tripID: tripID })}>
             <View style={styles.item}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.description}>{description}</Text>
+                <Text style={styles.description}>{startDateFormatted} - {endDateFormatted}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -53,12 +60,19 @@ class TripList extends Component {
                         tripID={item.id}
                         title={item.title}
                         description={item.description}
+                        startDate={item.startDate}
+                        endDate={item.endDate}
                         navigation={this.props.navigation} />}
                     keyExtractor={item => item.id}
                 />
             </SafeAreaView> :
             <View style={styles.container}>
-                <Text style={styles.header}>No se ha encontrado ningún viaje</Text>
+                <Text style={styles.header}>No tienes ningún viaje</Text>
+                <TouchableOpacity style={styles.createTripButton} onPress={() => this.props.navigation.navigate('Crear')}>
+                    <Text>
+                        Crear un viaje
+                    </Text>
+                </TouchableOpacity>
             </View>
     }
 }
@@ -86,7 +100,7 @@ const styles = StyleSheet.create({
     },
     item: {
         backgroundColor: '#FFF',
-        padding: 20,
+        padding: 15,
         marginVertical: 8,
         marginHorizontal: 16,
     },
@@ -95,7 +109,15 @@ const styles = StyleSheet.create({
     },
     description: {
         fontSize: 14,
-    }
+    },
+    createTripButton: {
+        marginHorizontal: 20,
+        backgroundColor: '#3399ff',
+        borderRadius: 4,
+        height: 42,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
 });
 
 export default TripList;
