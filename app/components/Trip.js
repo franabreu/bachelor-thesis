@@ -45,7 +45,6 @@ export default class Trip extends React.Component {
     componentDidMount() {
         const tripID = this.props.navigation.state.params.tripID
         this.setState({ tripID: tripID });
-        console.log('tripID: ' + tripID)
 
         getTripById(tripID, this.onTripReceived)
     }
@@ -69,8 +68,11 @@ export default class Trip extends React.Component {
                     <Text style={styles.date}>Llegada: {this.state.endDate}</Text>
                 </View>
 
-                <TouchableOpacity style={styles.expensesButton} onPress={() => navigation.navigate('Trip', { tripID: tripID })}>
-                    <Text>Gastos</Text>
+                <TouchableOpacity style={styles.expensesButton} 
+                    onPress={() => this.props.navigation.navigate('ExpensesList', { tripID: this.state.tripID })}>
+                    <Text>
+                        Gastos
+                    </Text>
                 </TouchableOpacity>
 
             </SafeAreaView>
@@ -119,6 +121,7 @@ const styles = StyleSheet.create({
         fontWeight: '500'
     },
     expensesButton: {
+        paddingHorizontal: 10,
         marginHorizontal: 20,
         backgroundColor: '#3399ff',
         borderRadius: 4,

@@ -1,12 +1,17 @@
 import React from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-  LayoutAnimation,
-  TouchableOpacity
+    StyleSheet,
+    View,
+    Text,
+    StatusBar,
+    LayoutAnimation,
+    TouchableOpacity,
+    Picker
 } from 'react-native';
+/* 
+import {Picker} from '@react-native-community/picker' */
+
+import { getCurrency, getUserCurrency, updateUserCurrency } from '../server/ExpensesAPI';
 
 /* import * as firebase from 'firebase';
  */
@@ -21,17 +26,41 @@ export default class Profile extends React.Component {
 
     state = {
         email: "",
-        displayName: ""
+        displayName: "",
+        photoURL: "",
+        currency: "",
+        data: [
+            {
+                code: "EUR"
+            },
+            {
+                code: "USA"
+            }
+        ],
+        currencyList: []
+    }
+
+    onCurrencyReceived = (currencyList) => {
+        this.setState(prevState => ({
+            currencyList: prevState.currencyList = currencyList
+        }));
     }
 
     componentDidMount() {
-        const {email, displayName} = firebase.auth().currentUser;
+        const { email, displayName, photoURL } = firebase.auth().currentUser;
+        this.setState({ email, displayName, photoURL});
+        this.setState({currency: photoURL})
 
-        this.setState({email, displayName});
+        getCurrency(this.onCurrencyReceived);
     }
 
     signOut = () => {
         firebase.auth().signOut();
+    }
+
+    setMainCurrency(code) {
+        this.setState({ currency: code })
+        updateUserCurrency(code)
     }
 
     render() {
@@ -41,11 +70,27 @@ export default class Profile extends React.Component {
             <View style={styles.container}>
                 <StatusBar barStyle='light-content'></StatusBar>
 
-                <Text>¡Hola, {this.state.displayName}!</Text>
-
-                <TouchableOpacity style={{marginTop: 32}} onPress={this.signOut}>
+                <TouchableOpacity style={styles.signOutButton} onPress={this.signOut}>
                     <Text>Cerrar sesión</Text>
                 </TouchableOpacity>
+
+                <Text>Nombre: {this.state.displayName}</Text>
+                <Text>Correo electrónico: {this.state.email}</Text>
+
+                <View>
+                    <Text>Divisa principal:</Text>
+                    <Picker
+                        selectedValue={this.state.currency}
+                        style={{ height: 10, width: 100 }}
+                        onValueChange={(itemValue, itemIndex) =>
+                            this.setMainCurrency(itemValue)
+                            /* this.setState({ currency: itemValue }) */
+                        }>
+                        {this.state.currencyList.map(element =>
+                            <Picker.Item label={element.symbol} value={element.code} />
+                        )}
+                    </Picker>
+                </View>
             </View>
         )
     }
@@ -53,8 +98,18 @@ export default class Profile extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center'
-    }
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    signOutButton: {
+        paddingHorizontal: 10,
+        marginBottom:20,
+        marginHorizontal: 20,
+        backgroundColor: '#3399ff',
+        borderRadius: 4,
+        height: 42,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
 });
