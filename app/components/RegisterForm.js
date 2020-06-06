@@ -24,6 +24,7 @@ export default class RegisterForm extends React.Component {
         surname: "",
         email: "",
         password: "",
+        currency: "EUR",
         errorMessage: null
     }
 
@@ -34,7 +35,8 @@ export default class RegisterForm extends React.Component {
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(userCredentials => {
             return userCredentials.user.updateProfile({
-                displayName: this.state.name + " " + this.state.surname
+                displayName: this.state.name + " " + this.state.surname,
+                photoURL: this.state.currency
             });
         })
         .catch(error => this.setState({errorMessage: error.message}))

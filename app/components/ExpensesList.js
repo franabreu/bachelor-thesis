@@ -3,7 +3,7 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text } from 'react-native';
 
 import { NavigationEvents } from "react-navigation";
 
-import { getMyTrips } from '../server/TripsAPI';
+import { getExpensesByTripId } from '../server/ExpensesAPI';
 
 import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
@@ -14,67 +14,69 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import 'moment/locale/es'
 var moment = require('moment');
 
-function Item({ tripID, title, description, startDate, endDate, navigation }) {
-    moment.locale('es');
-    var startDateFormatted = moment(startDate).locale('es').format('LL');
-    var endDateFormatted = moment(endDate).locale('es').format('LL');
 
+function Item({ tripID, name, amount, currency, navigation }) {
+    console.log()
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('Trip', { tripID: tripID })}>
-            <View style={styles.item}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.description}>{startDateFormatted} - {endDateFormatted}</Text>
-            </View>
-        </TouchableOpacity>
+        <View style={styles.item}>
+            <Text style={styles.title}>{name} - {amount} {currency}</Text>
+        </View>
     );
 }
 
-class TripList extends Component {
+export default class ExpensesList extends React.Component {
 
     state = {
-        tripList: [],
-        selectedIndex: 0
+        expensesList: [],
+        tripID: '',
+        trip: '',
+        startDate: '',
+        endDate: ''
     }
 
-    onTripsReceived = (tripList) => {
+    onExpensesReceived = (expensesList) => {
         this.setState(prevState => ({
-            tripList: prevState.tripList = tripList
+            expensesList: prevState.expensesList = expensesList
         }));
-        console.log(JSON.stringify(tripList))
+        console.log(JSON.stringify(expensesList))
     }
 
     componentDidMount() {
-        this._navListener = this.props.navigation.addListener('didFocus', () => {
-            getMyTrips(this.onTripsReceived);
-        });
+        const tripID = this.props.navigation.state.params.tripID
+        this.setState({ tripID: tripID });
+
+        getExpensesByTripId(tripID, this.onExpensesReceived)
+        /* this._navListener = this.props.navigation.addListener('didFocus', () => {
+            getTripExpenses(this.onExpensesReceived);
+        }); */
     }
 
     render() {
-        return this.state.tripList.length > 0 ?
+
+        return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Mis viajes</Text>
+                    <Text style={styles.headerTitle}>Gastos del viaje</Text>
+                </View>
+                <View style={styles.container}>
+                    <TouchableOpacity style={styles.createTripButton} onPress={() => this.props.navigation.navigate('ExpenseForm')}>
+                        <Text>
+                            Añadir gasto
+                    </Text>
+                    </TouchableOpacity>
                 </View>
                 <FlatList
-                    data={this.state.tripList}
+                    data={this.state.expensesList}
                     renderItem={({ item }) => <Item style={styles.item}
                         tripID={item.id}
-                        title={item.title}
-                        description={item.description}
-                        startDate={item.startDate}
-                        endDate={item.endDate}
+                        name={item.name}
+                        amount={item.amount}
+                        currency={item.currency}
                         navigation={this.props.navigation} />}
                     keyExtractor={item => item.id}
                 />
-            </SafeAreaView> :
-            <View style={styles.container}>
-                <Text style={styles.header}>No tienes ningún viaje</Text>
-                <TouchableOpacity style={styles.createTripButton} onPress={() => this.props.navigation.navigate('Crear')}>
-                    <Text>
-                        Crear un viaje
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            </SafeAreaView>
+        )
     }
 }
 
@@ -121,5 +123,3 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
 });
-
-export default TripList;
