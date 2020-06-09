@@ -70,18 +70,13 @@ export default class Profile extends React.Component {
             <View style={styles.container}>
                 <StatusBar barStyle='light-content'></StatusBar>
 
-                <TouchableOpacity style={styles.signOutButton} onPress={this.signOut}>
-                    <Text>Cerrar sesión</Text>
-                </TouchableOpacity>
-
                 <Text>Nombre: {this.state.displayName}</Text>
                 <Text>Correo electrónico: {this.state.email}</Text>
-
                 <View>
                     <Text>Divisa principal:</Text>
                     <Picker
                         selectedValue={this.state.currency}
-                        style={{ height: 10, width: 100 }}
+                        style={{width: 100 }}
                         onValueChange={(itemValue, itemIndex) =>
                             this.setMainCurrency(itemValue)
                             /* this.setState({ currency: itemValue }) */
@@ -91,6 +86,10 @@ export default class Profile extends React.Component {
                         )}
                     </Picker>
                 </View>
+
+                <TouchableOpacity style={styles.signOutButton} onPress={this.signOut}>
+                    <Text>Cerrar sesión</Text>
+                </TouchableOpacity>
             </View>
         )
     }

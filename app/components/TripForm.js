@@ -34,7 +34,7 @@ function City({ name }) {
     );
 }
 
-export default class RegisterForm extends ValidationComponent {
+export default class TripForm extends ValidationComponent {
     static navigationOptions = {
         headerShown: false
     };

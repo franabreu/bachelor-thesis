@@ -40,7 +40,6 @@ class TripList extends Component {
         this.setState(prevState => ({
             tripList: prevState.tripList = tripList
         }));
-        console.log(JSON.stringify(tripList))
     }
 
     componentDidMount() {

@@ -30,6 +30,7 @@ import TripForm from './app/components/TripForm';
 import MyTrips from './app/components/MyTrips';
 import Profile from './app/components/Profile';
 import ExpensesList from './app/components/ExpensesList';
+import ExpenseForm from './app/components/ExpenseForm';
 
 import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
@@ -59,7 +60,7 @@ if (!global.btoa) { global.btoa = encode; }
 if (!global.atob) { global.atob = decode; } */
 
 // Ignores the warning of a deprecated method thar will be added back
-YellowBox.ignoreWarnings(['VirtualizedLists should never be nested inside plain ScrollViews', 'Animated: `useNativeDriver`', 'Picker has been extracted', 'onAnimatedValueUpdate']);
+YellowBox.ignoreWarnings(['VirtualizedLists should never be nested inside plain ScrollViews', 'Animated: `useNativeDriver`', 'Picker has been extracted', 'onAnimatedValueUpdate', 'componentWillReceiveProps has been renamed', 'unique "key" prop']);
 
 /* if(__DEV__) {
   import('./ReactotronConfig.js').then(() => console.log('Reactotron Configured'))
@@ -81,6 +82,12 @@ const TripStack = createStackNavigator({
   },
   ExpensesList: {
     screen: ExpensesList,
+    navigationOptions: {
+      headerShown: false
+    },
+  },
+  ExpenseForm: {
+    screen: ExpenseForm,
     navigationOptions: {
       headerShown: false
     },
