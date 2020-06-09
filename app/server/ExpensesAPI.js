@@ -65,9 +65,41 @@ export async function getExpensesByTripId(tripID, onExpensesReceived) {
   onExpensesReceived(expensesList);
 }
 
+export async function getExchangeRate(currency) {
+
+  const mainCurrency = firebase.auth().currentUser.photoURL;
+
+  console.log('https://api.exchangeratesapi.io/latest?base=' + mainCurrency + '&symbols=' + currency);
+
+  return fetch('https://api.exchangeratesapi.io/latest?base=' + mainCurrency + '&symbols=' + currency)
+    .then((response) => response.json())
+    .then((json) => {
+      console.log('Response: ' + JSON.stringify(json))
+      var rate = json.rates[currency];
+      console.log('Rate: ' + rate)
+      return rate;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
 
 
-export async function getTripById(tripID, expensesRetreived) {
+export async function uploadExpense(data, tripID) {
+
+  firebase.firestore().collection('trip/' + tripID + '/expenses').doc().set(data)
+    .then(function () {
+      console.log("Document successfully written!");
+    })
+    .catch(function (error) {
+      console.error("Error writing document: ", error);
+    });
+
+}
+
+
+
+/* export async function getTripById(tripID, expensesRetreived) {
 
   var expensesList = [];
 
@@ -89,4 +121,4 @@ export async function getTripById(tripID, expensesRetreived) {
   });
 
   expensesRetreived(expensesList);
-}
+} */

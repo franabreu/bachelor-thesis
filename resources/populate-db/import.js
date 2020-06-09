@@ -10,7 +10,7 @@ const jsonToFirestore = async () => {
     await firestoreService.initializeApp(serviceAccount, firebaseConfig.databaseURL);
     console.log('Firebase Initialized');
 
-    await firestoreService.restore('./currency/currency.json');
+    await firestoreService.restore('./currency/currencyShort.json');
     console.log('Upload Success');
   }
   catch (error) {

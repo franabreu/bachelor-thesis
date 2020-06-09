@@ -16,7 +16,6 @@ var moment = require('moment');
 
 
 function Item({ tripID, name, amount, currency, navigation }) {
-    console.log()
     return (
         <View style={styles.item}>
             <Text style={styles.title}>{name} - {amount} {currency}</Text>
@@ -38,7 +37,7 @@ export default class ExpensesList extends React.Component {
         this.setState(prevState => ({
             expensesList: prevState.expensesList = expensesList
         }));
-        console.log(JSON.stringify(expensesList))
+        /* console.log(JSON.stringify(expensesList)) */
     }
 
     componentDidMount() {
@@ -55,11 +54,13 @@ export default class ExpensesList extends React.Component {
 
         return (
             <SafeAreaView style={styles.container}>
+                <NavigationEvents onWillFocus={() => this.componentDidMount()} />
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>Gastos del viaje</Text>
                 </View>
-                <View style={styles.container}>
-                    <TouchableOpacity style={styles.createTripButton} onPress={() => this.props.navigation.navigate('ExpenseForm')}>
+                <View>
+                    <TouchableOpacity style={styles.addExpenseButton} onPress={() => 
+                        this.props.navigation.navigate('ExpenseForm', { tripID: this.state.tripID })}>
                         <Text>
                             Añadir gasto
                     </Text>
@@ -113,7 +114,8 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 14,
     },
-    createTripButton: {
+    addExpenseButton: {
+        marginVertical: 20,
         paddingHorizontal: 10,
         marginHorizontal: 20,
         backgroundColor: '#3399ff',
