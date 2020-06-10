@@ -21,7 +21,7 @@ import ValidationComponent from 'react-native-form-validator';
 
 import NumericInput from 'react-native-numeric-input'
 
-import { uploadExpense, getCurrency, getExchangeRate } from '../server/ExpensesAPI';
+import { uploadExpense, getCurrency, getExchangeRate, updateExpense } from '../server/ExpensesAPI';
 
 /* import * as firebase from 'firebase'; */
 
@@ -41,6 +41,7 @@ export default class ExpenseForm extends ValidationComponent {
 
     state = {
         tripID: '',
+        expenseID: null,
         name: '',
         amount: 0,
         currency: 'EUR',
@@ -64,6 +65,12 @@ export default class ExpenseForm extends ValidationComponent {
         this.setState({ tripID: tripID });
         getCurrency(this.onCurrencyReceived);
         this.setState({ mainCurrency: firebase.auth().currentUser.photoURL })
+
+        var expense = this.props.navigation.state.params.expense;
+        if (expense != null) {
+            this.setState({ expenseID: expense.expenseID, name: expense.name, amount: expense.amount, currency: expense.currency, exchangeRate: expense.exchangeRate,
+                date: expense.date, category: expense.category, mainAmount: expense.mainAmount });
+        }
     }
 
     handleCurrencyChange(selected) {
@@ -75,9 +82,7 @@ export default class ExpenseForm extends ValidationComponent {
             fetch('https://api.exchangeratesapi.io/latest?base=' + selected + '&symbols=' + mainCurrency)
                 .then((response) => response.json())
                 .then((json) => {
-                    console.log('Response: ' + JSON.stringify(json))
                     var rate = json.rates[mainCurrency];
-                    console.log('Rate: ' + rate)
                     this.setState({ exchangeRate: rate })
                     this.updateMainAmount();
                 })
@@ -85,7 +90,6 @@ export default class ExpenseForm extends ValidationComponent {
                     console.error(error);
                 });
         } else {
-            console.log('Same currency: ')
             this.setState({ exchangeRate: 1 })
             this.updateMainAmount();
         }
@@ -123,9 +127,7 @@ export default class ExpenseForm extends ValidationComponent {
             fetch('https://api.exchangeratesapi.io/latest?base=' + currency + '&symbols=' + mainCurrency)
                 .then((response) => response.json())
                 .then((json) => {
-                    console.log('Response: ' + JSON.stringify(json))
                     var rate = json.rates[mainCurrency];
-                    console.log('Rate: ' + rate)
                     this.setState({ exchangeRate: rate })
                     this.updateMainAmount();
                 })
@@ -133,7 +135,6 @@ export default class ExpenseForm extends ValidationComponent {
                     console.error(error);
                 });
         } else {
-            console.log('Same currency: ')
             this.setState({ exchangeRate: 1 })
             this.updateMainAmount();
         }
@@ -167,7 +168,11 @@ export default class ExpenseForm extends ValidationComponent {
         });
 
         if (this.isFormValid()) {
-            uploadExpense(data, this.state.tripID);
+            if (this.state.expenseID == null) {
+                uploadExpense(data, this.state.tripID, this.state.expenseID);
+            } else {
+                updateExpense(data, this.state.tripID, this.state.expenseID);
+            }
             this.props.navigation.navigate('ExpensesList', { tripID: this.state.tripID });
         }
     }
@@ -298,7 +303,7 @@ export default class ExpenseForm extends ValidationComponent {
 
                         <View style={styles.inputTitle}>
                             <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
-                                <Text style={styles.buttonText}>Crear</Text>
+                                <Text style={styles.buttonText}>Guardar</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

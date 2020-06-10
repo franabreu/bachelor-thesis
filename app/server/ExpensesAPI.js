@@ -46,12 +46,12 @@ export async function getExpensesByTripId(tripID, onExpensesReceived) {
   var expensesList = [];
 
   var snapshot = await firebase.firestore().collection("trip/" + tripID + "/expenses")
-  .orderBy('date', 'asc')
-  .get();
+    .orderBy('date', 'asc')
+    .get();
 
   snapshot.forEach((doc) => {
     const expenseItem = doc.data();
-    expenseItem.id = doc.id;
+    expenseItem.expenseID = doc.id;
     expenseItem.name = doc.data().name;
     expenseItem.amount = doc.data().amount;
     expenseItem.currency = doc.data().currency;
@@ -69,14 +69,10 @@ export async function getExchangeRate(currency) {
 
   const mainCurrency = firebase.auth().currentUser.photoURL;
 
-  console.log('https://api.exchangeratesapi.io/latest?base=' + mainCurrency + '&symbols=' + currency);
-
   return fetch('https://api.exchangeratesapi.io/latest?base=' + mainCurrency + '&symbols=' + currency)
     .then((response) => response.json())
     .then((json) => {
-      console.log('Response: ' + JSON.stringify(json))
       var rate = json.rates[currency];
-      console.log('Rate: ' + rate)
       return rate;
     })
     .catch((error) => {
@@ -97,28 +93,19 @@ export async function uploadExpense(data, tripID) {
 
 }
 
+export async function updateExpense(data, tripID, expenseID) {
 
-
-/* export async function getTripById(tripID, expensesRetreived) {
-
-  var expensesList = [];
-
-  var snapshot = firebase.firestore().collection("trip/" + tripID + "/expenses")
-  .orderBy('date', 'asc')
-  .get();
-
-  snapshot.forEach((doc) => {
-    const expenseItem = doc.data();
-    expenseItem.id = doc.id;
-    expenseItem.name = doc.data().name;
-    expenseItem.amount = doc.data().amount;
-    expenseItem.currency = doc.data().currency;
-    expenseItem.exchangeRate = doc.data().exchangeRate;
-    expenseItem.category = doc.data().category;
-    expenseItem.date = doc.data().date.toDate();
-
-    expensesList.push(expenseItem);
+  firebase.firestore().collection('trip/' + tripID + '/expenses').doc(expenseID).delete().then(function () {
+    console.log("Document successfully deleted!");
+  }).catch(function (error) {
+    console.error("Error removing document: ", error);
   });
 
-  expensesRetreived(expensesList);
-} */
+  firebase.firestore().collection('trip/' + tripID + '/expenses').doc().set(data)
+    .then(function () {
+      console.log("Document successfully written!");
+    })
+    .catch(function (error) {
+      console.error("Error writing document: ", error);
+    });
+}
