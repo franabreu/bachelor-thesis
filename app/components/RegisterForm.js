@@ -98,7 +98,7 @@ export default class RegisterForm extends React.Component {
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.goToRegistration} onPress={() => this.props.navigation.navigate('Login') }>
-                        <Text>
+                        <Text style={styles.textInput}>
                             ¿Ya tienes una cuenta? Iniciar sesión.
                         </Text>
                     </TouchableOpacity>
@@ -141,10 +141,11 @@ const styles = StyleSheet.create({
     inputTitle: {
         paddingLeft: 20,
         color: 'gray',
-        fontSize: 10,
+        fontSize: 16,
         textTransform: 'uppercase'
     },
     textInput: {
+        fontSize: 16,
         alignSelf: 'stretch',
         marginBottom: 20,
         paddingLeft: 20,
@@ -161,6 +162,9 @@ const styles = StyleSheet.create({
         height: 42,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    buttonText: {
+        fontSize: 16,
     },
     goToRegistration: {
         alignSelf: 'center',

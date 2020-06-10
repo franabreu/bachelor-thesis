@@ -54,6 +54,7 @@ export async function getExpensesByTripId(tripID, onExpensesReceived) {
     expenseItem.expenseID = doc.id;
     expenseItem.name = doc.data().name;
     expenseItem.amount = doc.data().amount;
+    expenseItem.mainAmount = doc.data().mainAmount;
     expenseItem.currency = doc.data().currency;
     expenseItem.exchangeRate = doc.data().exchangeRate;
     expenseItem.category = doc.data().category;
