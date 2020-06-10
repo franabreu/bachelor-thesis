@@ -15,10 +15,13 @@ import 'moment/locale/es'
 var moment = require('moment');
 
 
-function Item({ tripID, name, amount, currency, navigation }) {
+function Item({ tripID, name, amount, currency, expense, navigation }) {
     return (
         <View style={styles.item}>
-            <Text style={styles.title}>{name} - {amount} {currency}</Text>
+            <TouchableOpacity onPress={() => 
+                navigation.navigate('ExpenseForm', { tripID: tripID, expense: expense })}>
+                <Text style={styles.title}>{name} - {amount} {currency}</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -37,7 +40,6 @@ export default class ExpensesList extends React.Component {
         this.setState(prevState => ({
             expensesList: prevState.expensesList = expensesList
         }));
-        /* console.log(JSON.stringify(expensesList)) */
     }
 
     componentDidMount() {
@@ -69,10 +71,11 @@ export default class ExpensesList extends React.Component {
                 <FlatList
                     data={this.state.expensesList}
                     renderItem={({ item }) => <Item style={styles.item}
-                        tripID={item.id}
+                        tripID={this.state.tripID}
                         name={item.name}
                         amount={item.amount}
                         currency={item.currency}
+                        expense={item}
                         navigation={this.props.navigation} />}
                     keyExtractor={item => item.id}
                 />
