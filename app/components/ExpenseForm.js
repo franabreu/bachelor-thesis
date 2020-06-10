@@ -291,7 +291,7 @@ export default class ExpenseForm extends ValidationComponent {
                                         this.setState({ category: itemValue })
                                     }>
                                     {categoryEnum.map((item, index) => {
-                                        return (<Picker.Item label={item} value={index} key={index} />)
+                                        return (<Picker.Item label={item} value={item} key={index} />)
                                     })}
                                 </Picker>
                             </View>
