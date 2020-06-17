@@ -26,6 +26,7 @@ import RegisterForm from './app/components/RegisterForm';
 
 import TripList from './app/components/TripList';
 import Trip from './app/components/Trip';
+import TripPublic from './app/components/TripPublic';
 import TripForm from './app/components/TripForm';
 import MyTrips from './app/components/MyTrips';
 import Profile from './app/components/Profile';
@@ -76,6 +77,12 @@ const TripStack = createStackNavigator({
   },
   Trip: {
     screen: Trip,
+    navigationOptions: {
+      headerShown: false
+    },
+  },
+  TripPublic: {
+    screen: TripPublic,
     navigationOptions: {
       headerShown: false
     },
