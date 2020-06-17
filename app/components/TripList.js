@@ -9,12 +9,19 @@ import "@react-native-firebase/firestore";
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-function Item({ title, description }) {
+import 'moment/locale/es'
+var moment = require('moment');
+
+function Item({ tripID, title, description, startDate, endDate, navigation }) {
+    moment.locale('es');
+    var startDateFormatted = moment(startDate).locale('es').format('LL');
+    var endDateFormatted = moment(endDate).locale('es').format('LL');
+
     return (
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('Trip', {tripID: this.state.tripID}) }>
+        <TouchableOpacity onPress={() => navigation.navigate('TripPublic', { tripID: tripID })}>
             <View style={styles.item}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.description}>{description}</Text>
+                <Text style={styles.description}>{startDateFormatted} - {endDateFormatted}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -41,11 +48,17 @@ class TripList extends Component {
         return this.state.tripList.length > 0 ?
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Explorar destinos</Text>
+                    <Text style={styles.headerTitle}>Mis viajes</Text>
                 </View>
                 <FlatList
                     data={this.state.tripList}
-                    renderItem={({ item }) => <Item style={styles.item} title={item.title} description={item.description} />}
+                    renderItem={({ item }) => <Item style={styles.item}
+                        tripID={item.id}
+                        title={item.title}
+                        description={item.description}
+                        startDate={item.startDate}
+                        endDate={item.endDate}
+                        navigation={this.props.navigation} />}
                     keyExtractor={item => item.id}
                 />
             </SafeAreaView> :
