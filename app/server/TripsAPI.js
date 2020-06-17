@@ -80,3 +80,12 @@ export async function getTripById(tripID, tripRetreived) {
     throw error;
   });
 }
+
+export async function deleteTripById(tripID) {
+
+  firebase.firestore().collection("trip").doc(tripID).delete().then(function () {
+    console.log("Document successfully deleted!");
+  }).catch(function (error) {
+    console.error("Error removing document: ", error);
+  });
+}

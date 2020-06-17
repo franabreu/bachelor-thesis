@@ -6,7 +6,8 @@ import {
     StatusBar,
     LayoutAnimation,
     TouchableOpacity,
-    SafeAreaView
+    SafeAreaView,
+    Alert
 } from 'react-native';
 
 /* import moment from 'moment' */
@@ -15,7 +16,7 @@ import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
 import "@react-native-firebase/firestore";
 
-import { getTripById } from '../server/TripsAPI';
+import { getTripById, deleteTripById } from '../server/TripsAPI';
 
 var moment = require('moment');
 
@@ -49,6 +50,11 @@ export default class Trip extends React.Component {
         getTripById(tripID, this.onTripReceived)
     }
 
+    deleteTrip(tripID) {
+        deleteTripById(tripID);
+        this.props.navigation.navigate('MyTrips')
+    }
+
     render() {
         LayoutAnimation.easeInEaseOut();
 
@@ -68,14 +74,25 @@ export default class Trip extends React.Component {
                     <Text style={styles.date}>Llegada: {this.state.endDate}</Text>
                 </View>
 
-                <TouchableOpacity style={styles.expensesButton} 
-                    onPress={() => this.props.navigation.navigate('ExpensesList', { tripID: this.state.tripID })}>
+                <TouchableOpacity style={styles.expensesButton}
+                    onPress={() => this.props.navigation.navigate('ExpensesList', { tripID: this.state.tripID, startDate: this.state.startDate, endDate: this.state.endDate })}>
                     <Text>
                         Gastos
                     </Text>
                 </TouchableOpacity>
 
-            </SafeAreaView>
+                <TouchableOpacity onPress={() => Alert.alert(
+                    'Dar de baja',
+                    '¿Está seguro de que desea eliminar este viaje?',
+                    [
+                        { text: 'No', onPress: () => null, style: 'cancel' },
+                        { text: 'Sí', onPress: () => this.deleteTrip(this.state.tripID) },
+                    ]
+                )}>
+                    <Text style={styles.text}>Eliminar viaje</Text>
+                </TouchableOpacity>
+
+            </SafeAreaView >
         )
     }
 }
@@ -129,4 +146,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    text: {
+        marginVertical: 10,
+        fontSize: 14,
+        fontWeight: '500'
+    }
 });
