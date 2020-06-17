@@ -77,6 +77,18 @@ export default class ExpensesList extends React.Component {
         let totalLeisure = parseFloat(0);
         let totalOther = parseFloat(0);
 
+        const startDate = this.props.navigation.state.params.startDate
+        const endDate = this.props.navigation.state.params.endDate
+
+        /* console.log('Start: ' + JSON.stringify(startDate))
+
+        var a = moment(startDate);
+        var b = moment(endDate);
+        
+        var days = moment.duration(a.diff(b, 'days')).format("YYYY-MM-DD")
+
+        console.log('Days: ' + JSON.stringify(days)) */
+
         for (const [index, value] of expensesList.entries()) {
             switch (value.category) {
                 case 'Transporte':
@@ -108,6 +120,8 @@ export default class ExpensesList extends React.Component {
         }
 
         totalExpenses = totalExpenses.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]
+        /* totalExpensesDay = totalExpenses/parseFloat(days)
+        console.log('Total por dias: ' + totalExpensesDay) */
         totalTransport = totalTransport.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]
         totalAccommodation = totalAccommodation.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]
         totalFood = totalFood.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0]
@@ -132,7 +146,7 @@ export default class ExpensesList extends React.Component {
                         this.props.navigation.navigate('ExpenseForm', { tripID: this.state.tripID })}>
                         <Text>
                             Añadir gasto
-                    </Text>
+                        </Text>
                     </TouchableOpacity>
                 </View>
 
@@ -148,17 +162,17 @@ export default class ExpensesList extends React.Component {
                             Comida: {this.state.totalFood} {this.state.mainCurrency} - Ocio: {this.state.totalLeisure} {this.state.mainCurrency} - Otros: {this.state.totalOther} {this.state.mainCurrency}
                         </Text>
                     </View>
-                <FlatList
-                    data={this.state.expensesList}
-                    renderItem={({ item }) => <Item style={styles.item}
-                        tripID={this.state.tripID}
-                        name={item.name}
-                        amount={item.amount}
-                        currency={item.currency}
-                        expense={item}
-                        navigation={this.props.navigation} />}
-                    keyExtractor={item => item.id}
-                />
+                    <FlatList
+                        data={this.state.expensesList}
+                        renderItem={({ item }) => <Item style={styles.item}
+                            tripID={this.state.tripID}
+                            name={item.name}
+                            amount={item.amount}
+                            currency={item.currency}
+                            expense={item}
+                            navigation={this.props.navigation} />}
+                        keyExtractor={item => item.id}
+                    />
                 </ScrollView>
             </SafeAreaView>
         )

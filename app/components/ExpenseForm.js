@@ -47,7 +47,7 @@ export default class ExpenseForm extends ValidationComponent {
         currency: 'EUR',
         exchangeRate: 1,
         date: new Date(),
-        category: '',
+        category: 'Transporte',
         errorMessage: null,
         currencyList: [],
         mainCurrency: '',
@@ -209,6 +209,7 @@ export default class ExpenseForm extends ValidationComponent {
                                     value={this.state.amount}
                                     onChange={amount => this.updateAmount(amount)}
                                     onLimitReached={(isMax, msg) => console.log(isMax, msg)}
+                                    minValue={0}
                                     totalWidth={320}
                                     totalHeight={40}
                                     iconSize={15}
@@ -228,7 +229,6 @@ export default class ExpenseForm extends ValidationComponent {
                                     selectedValue={this.state.currency}
                                     style={styles.picker}
                                     onValueChange={(itemValue, itemIndex) =>
-                                        /* this.setState({ currency: itemValue }) */
                                         this.handleCurrencyChange(itemValue)
                                     }>
                                     {this.state.currencyList.map(element =>
@@ -240,12 +240,13 @@ export default class ExpenseForm extends ValidationComponent {
 
                         {this.state.showExchangeRate ? (
                             <View>
-                                <Text style={styles.inputTitle}>Ratio de cambio</Text>
+                                <Text style={styles.inputTitle}>Tipo de cambio</Text>
                                 <View style={styles.numericInput}>
                                     <NumericInput
                                         value={this.state.exchangeRate}
                                         onChange={exchangeRate => this.handleExchangeRateChange(exchangeRate)}
                                         onLimitReached={(isMax, msg) => console.log(isMax, msg)}
+                                        minValue={0}
                                         totalWidth={320}
                                         totalHeight={40}
                                         iconSize={15}
@@ -258,18 +259,18 @@ export default class ExpenseForm extends ValidationComponent {
                                 </View>
 
                                 <TouchableOpacity style={styles.rateButton} onPress={this.hideExchangeRateComponent}>
-                                    <Text style={styles.buttonText}>Ratio de cambio actual</Text>
+                                    <Text style={styles.buttonText}>Tipo de cambio actual</Text>
                                 </TouchableOpacity>
                             </View>
                         ) :
                             <View>
-                                <Text style={styles.inputTitle}>Ratio de cambio</Text>
+                                <Text style={styles.inputTitle}>Tipo de cambio</Text>
                                 <Text style={styles.text}>
                                     {this.state.exchangeRate}
                                 </Text>
 
                                 <TouchableOpacity style={styles.rateButton} onPress={this.showExchangeRateComponent}>
-                                    <Text style={styles.buttonText}>Modificar ratio de cambio</Text>
+                                    <Text style={styles.buttonText}>Modificar tipo de cambio</Text>
                                 </TouchableOpacity>
                             </View>
                         }
@@ -419,7 +420,7 @@ const styles = StyleSheet.create({
         marginTop: -10,
         marginHorizontal: 70,
         marginBottom: 10,
-        backgroundColor: 'grey',
+        backgroundColor: '#cccccc',
         borderRadius: 4,
         height: 30,
         alignItems: 'center',

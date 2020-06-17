@@ -46,7 +46,7 @@ export async function getExpensesByTripId(tripID, onExpensesReceived) {
   var expensesList = [];
 
   var snapshot = await firebase.firestore().collection("trip/" + tripID + "/expenses")
-    .orderBy('date', 'asc')
+    .orderBy('date', 'desc')
     .get();
 
   snapshot.forEach((doc) => {
