@@ -14,10 +14,11 @@ import { CheckBox, SearchBar } from 'react-native-elements'
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import PlacesInput from 'react-native-places-input';
 
 import ValidationComponent from 'react-native-form-validator';
 
-import { uploadTrip } from '../server/TripsAPI';
+import { uploadTrip, uploadDay } from '../server/TripsAPI';
 
 /* import * as firebase from 'firebase'; */
 
@@ -25,6 +26,9 @@ import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
 import "@react-native-firebase/firestore";
 import { ScrollView } from 'react-native-gesture-handler';
+
+import 'moment/locale/es'
+var moment = require('moment');
 
 function City({ name }) {
     return (
@@ -39,7 +43,7 @@ export default class TripForm extends ValidationComponent {
         headerShown: false
     };
 
-    deviceLocale="es"
+    deviceLocale = "es"
 
     state = {
         title: "",
@@ -66,18 +70,19 @@ export default class TripForm extends ValidationComponent {
         }
 
         this.validate({
-            title: {minlength:2, maxlength:20, required: true},
-            description: {minlength:3, maxlength:200, required: true},
-            city: {minlength:3, maxlength:30, required: true},
-            startDate: {required: true},
-            endDate: {required: true},
+            title: { minlength: 2, maxlength: 20, required: true },
+            description: { minlength: 3, maxlength: 200, required: true },
+            city: { minlength: 3, maxlength: 60, required: true },
+            startDate: { required: true },
+            endDate: { required: true },
         });
 
         if (this.isFormValid()) {
-            uploadTrip(data);
+            var tripID = uploadTrip(data);
             this.props.navigation.navigate('MyTrips');
         }
     }
+
 
     checkBoxPressed = () => {
         if (this.state.public == true) {
@@ -90,7 +95,7 @@ export default class TripForm extends ValidationComponent {
     render() {
         return (
             <ScrollView
-                keyboardShouldPersistTaps='always'>
+                keyboardShouldPersistTaps="always">
                 <View style={StyleSheet.container}>
                     <StatusBar barStyle='light-content'></StatusBar>
 
@@ -142,7 +147,7 @@ export default class TripForm extends ValidationComponent {
                                 getDefaultValue={() => ''}
                                 query={{
                                     // available options: https://developers.google.com/places/web-service/autocomplete
-                                    key: 'AIzaSyCH-g4oifQVp00IVDnvgFHwKALejOaY3HU',
+                                    key: 'AIzaSyA8ZqUwMZ29hi5E2tpOKxcStU1Xb4EvS4g',
                                     language: 'es', // language of the results
                                     types: '(cities)', // default: 'geocode'
                                 }}
@@ -174,11 +179,6 @@ export default class TripForm extends ValidationComponent {
                                 currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
                                 currentLocationLabel='Current location'
                                 nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-                                GoogleReverseGeocodingQuery={
-                                    {
-                                        // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-                                    }
-                                }
                                 GooglePlacesSearchQuery={{
                                     // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
                                     rankby: 'distance',
@@ -205,7 +205,7 @@ export default class TripForm extends ValidationComponent {
                                 value={this.state.startDate}
                                 mode='date'
                                 display="calendar"
-                                onDateChange={(startDate) => { this.setState({ startDate: startDate }) }}>
+                                onChange={ (event, value) => {this.setState({startDate: value});}}>
                             </DateTimePicker>
                         </View>
 
@@ -215,7 +215,7 @@ export default class TripForm extends ValidationComponent {
                                 value={this.state.endDate}
                                 mode='date'
                                 display="calendar"
-                                onDateChange={(endDate) => { this.setState({ endDate: endDate }) }}>
+                                onChange={ (event, value) => {this.setState({endDate: value});}}>
                             </DateTimePicker>
                         </View>
 

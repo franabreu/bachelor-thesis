@@ -5,6 +5,9 @@ import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
 import "@react-native-firebase/firestore";
 
+import 'moment/locale/es'
+var moment = require('moment');
+
 export async function getTrips(tripsRetreived) {
 
   var tripList = [];
@@ -55,7 +58,46 @@ export async function getMyTrips(tripsRetreived) {
 
 export async function uploadTrip(data) {
 
-  firebase.firestore().collection("trip").doc().set(data)
+  firebase.firestore().collection("trip").add(data)
+    .then(docRef => {
+      console.log("Document successfully written!");
+
+      var tripSaved = firebase.firestore().collection("trip").doc(docRef.id);
+
+      tripSaved.get().then(function (doc) {
+        if (doc.exists) {
+          var trip = doc.data();
+          var currDate = moment(trip.startDate.toDate()).startOf('day');
+          var lastDate = moment(trip.endDate.toDate()).startOf('day');
+
+          while (currDate.diff(lastDate) < 1) {
+            var dayDate = {date: currDate.toDate()};
+            currDate.add(1, 'days');
+            firebase.firestore().collection("trip/" + docRef.id + '/days').doc().set(dayDate)
+              .then(function () {
+                console.log("Document successfully written!");
+              })
+              .catch(function (error) {
+                console.error("Error writing document: ", error);
+              });
+          }
+        } else {
+          console.log("No such document!");
+        }
+      }).catch(function (error) {
+        console.log("Error getting document:", error);
+        throw error;
+      });
+    })
+    .catch(function (error) {
+      console.error("Error writing document: ", error);
+    });
+
+}
+
+export async function uploadDay(tripID, data) {
+
+  firebase.firestore().collection("trip/" + tripID + '/days').doc().set(data)
     .then(function () {
       console.log("Document successfully written!");
     })
