@@ -32,6 +32,7 @@ import MyTrips from './app/components/MyTrips';
 import Profile from './app/components/Profile';
 import ExpensesList from './app/components/ExpensesList';
 import DaysList from './app/components/DaysList';
+import ActivitiesList from './app/components/ActivitiesList';
 import ExpenseForm from './app/components/ExpenseForm';
 
 import firebase from '@react-native-firebase/app';
@@ -96,6 +97,12 @@ const TripStack = createStackNavigator({
   },
   DaysList: {
     screen: DaysList,
+    navigationOptions: {
+      headerShown: false
+    },
+  },
+  ActivitiesList: {
+    screen: ActivitiesList,
     navigationOptions: {
       headerShown: false
     },
