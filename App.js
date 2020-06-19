@@ -34,6 +34,7 @@ import ExpensesList from './app/components/ExpensesList';
 import DaysList from './app/components/DaysList';
 import ActivitiesList from './app/components/ActivitiesList';
 import ExpenseForm from './app/components/ExpenseForm';
+import ActivityForm from './app/components/ActivityForm';
 
 import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
@@ -112,7 +113,13 @@ const TripStack = createStackNavigator({
     navigationOptions: {
       headerShown: false
     },
-  }
+  },
+  ActivityForm: {
+    screen: ActivityForm,
+    navigationOptions: {
+      headerShown: false
+    },
+  },
 })
 
 const AppTabNavigator = createBottomTabNavigator(

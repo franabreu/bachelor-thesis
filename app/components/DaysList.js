@@ -22,7 +22,7 @@ function Item({ tripID, dayID, date, navigation }) {
     return (
         <View style={styles.item}>
             <TouchableOpacity onPress={() =>
-                navigation.navigate('ActivitiesList', { tripID: tripID, dayID: dayID })}>
+                navigation.navigate('ActivitiesList', { tripID: tripID, dayID: dayID, date: date })}>
                 <Text style={styles.dayText}>{dayDate} </Text>
             </TouchableOpacity>
         </View>
@@ -35,9 +35,7 @@ export default class DaysList extends React.Component {
         daysList: [],
         tripID: '',
         dayID: '',
-        trip: '',
-        startDate: '',
-        endDate: '',
+        trip: ''
     }
 
     onDaysReceived = (daysList
