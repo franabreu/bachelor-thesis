@@ -41,3 +41,15 @@ export async function getActivitiesByDayId(tripID, dayID, onActivitiesReceived) 
 
   onActivitiesReceived(activitiesList);
 }
+
+export async function uploadActivity(data, tripID, dayID) {
+
+  firebase.firestore().collection('trip/' + tripID + '/days/' + dayID + '/activities').doc().set(data)
+    .then(function () {
+      console.log("Document successfully written!");
+    })
+    .catch(function (error) {
+      console.error("Error writing document: ", error);
+    });
+
+}

@@ -23,9 +23,8 @@ function Item({ tripID, dayID, name, note, time, navigation }) {
         <View style={styles.item}>
             <TouchableOpacity onPress={() =>
                 navigation.navigate('ActivitiesList', { tripID: tripID, dayID: dayID })}>
-                <Text style={styles.activityText}>{name} </Text>
-                <Text style={styles.activityText}>{note} </Text>
-                <Text style={styles.activityText}>{actTime} </Text>
+                <Text style={styles.activityText}>{actTime} - {name}</Text>
+                <Text style={styles.activityText2}>{note} </Text>
             </TouchableOpacity>
         </View>
     );
@@ -37,7 +36,7 @@ export default class ActivitiesList extends React.Component {
         activitiesList: [],
         tripID: '',
         dayID: '',
-        trip: ''
+        date: new Date()
     }
 
     onActivitiesReceived = (activitiesList
@@ -50,9 +49,10 @@ export default class ActivitiesList extends React.Component {
     componentDidMount() {
         const tripID = this.props.navigation.state.params.tripID
         const dayID = this.props.navigation.state.params.dayID
+        const date = this.props.navigation.state.params.date
         this.setState({ tripID: tripID });
         this.setState({ dayID: dayID });
-
+        this.setState({ date: date });
         getActivitiesByDayId(tripID, dayID, this.onActivitiesReceived)
     }
 
@@ -64,6 +64,14 @@ export default class ActivitiesList extends React.Component {
                 <NavigationEvents onWillFocus={() => this.componentDidMount()} />
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>Actividades</Text>
+                </View>
+                <View>
+                    <TouchableOpacity style={styles.addActivityButton} onPress={() =>
+                        this.props.navigation.navigate('ActivityForm', { tripID: this.state.tripID, dayID: this.state.dayID, date: this.state.date })}>
+                        <Text>
+                            Añadir actividad
+                        </Text>
+                    </TouchableOpacity>
                 </View>
                 <ScrollView>
                     <FlatList
@@ -112,6 +120,20 @@ const styles = StyleSheet.create({
     },
     activityText: {
         fontSize: 20,
+        paddingVertical: 4
+    },
+    activityText2: {
+        fontSize: 16,
         paddingVertical: 8
-    }
+    },
+    addActivityButton: {
+        marginVertical: 20,
+        paddingHorizontal: 10,
+        marginHorizontal: 20,
+        backgroundColor: '#3399ff',
+        borderRadius: 4,
+        height: 42,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
 });
