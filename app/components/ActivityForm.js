@@ -16,7 +16,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import ValidationComponent from 'react-native-form-validator';
 
-import { uploadActivity } from '../server/DaysAPI';
+import { uploadActivity, updateActivity } from '../server/DaysAPI';
 
 /* import * as firebase from 'firebase'; */
 
@@ -42,7 +42,7 @@ export default class ActivityForm extends ValidationComponent {
         name: '',
         note: '',
         time: new Date(),
-        errorMessage: null,
+        errorMessage: null
     }
 
     componentDidMount() {
@@ -52,6 +52,11 @@ export default class ActivityForm extends ValidationComponent {
         this.setState({ tripID: tripID });
         this.setState({ dayID: dayID });
         this.setState({ time: time });
+
+        var activity = this.props.navigation.state.params.activity;
+        if (activity != null) {
+            this.setState({ activityID: activity.activityID, name: activity.name, note: activity.note, time: activity.time });
+        }
     }
 
     handleSubmit = () => {
@@ -69,7 +74,11 @@ export default class ActivityForm extends ValidationComponent {
         });
 
         if (this.isFormValid()) {
-            uploadActivity(data, this.state.tripID, this.state.dayID);
+            if (this.state.activityID == null) {
+                uploadActivity(data, this.state.tripID, this.state.expenseID);
+            } else {
+                updateActivity(data, this.state.tripID, this.state.dayID, this.state.activityID);
+            }
             this.props.navigation.navigate('ActivitiesList', { tripID: this.state.tripID, dayID: this.state.dayID });
         }
     }
@@ -113,7 +122,7 @@ export default class ActivityForm extends ValidationComponent {
                             <DateTimePicker
                                 value={this.state.time}
                                 mode='time'
-                                onChange={ (event, value) => {this.setState({time: value});}}>
+                                onChange={(event, value) => { this.setState({ time: value }); }}>
                             </DateTimePicker>
                         </View>
 
@@ -127,6 +136,20 @@ export default class ActivityForm extends ValidationComponent {
                                 <Text style={styles.buttonText}>Guardar</Text>
                             </TouchableOpacity>
                         </View>
+
+                        {this.state.activity != null ?
+                            <TouchableOpacity onPress={() => Alert.alert(
+                                'Dar de baja',
+                                '¿Está seguro de que desea eliminar este viaje?',
+                                [
+                                    { text: 'No', onPress: () => null, style: 'cancel' },
+                                    { text: 'Sí', onPress: () => this.deleteActivity(this.state.tripID, this.state.dayID, this.state.activityID) },
+                                ]
+                            )}>
+                                <Text style={styles.text}>Eliminar actividad</Text>
+                            </TouchableOpacity>
+                            : null
+                        }
                     </View>
                 </View>
             </ScrollView>
