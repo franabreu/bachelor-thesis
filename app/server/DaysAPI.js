@@ -31,7 +31,7 @@ export async function getActivitiesByDayId(tripID, dayID, onActivitiesReceived) 
 
   snapshot.forEach((doc) => {
     const activityItem = doc.data();
-    activityItem.dayID = doc.id;
+    activityItem.activityID = doc.id;
     activityItem.name = doc.data().name;
     activityItem.note = doc.data().note;
     activityItem.time = doc.data().time.toDate();
@@ -52,4 +52,21 @@ export async function uploadActivity(data, tripID, dayID) {
       console.error("Error writing document: ", error);
     });
 
+}
+
+export async function updateActivity(data, tripID, dayID, activityID) {
+
+  firebase.firestore().collection('trip/' + tripID + '/days/' + dayID + '/activities').doc(activityID).delete().then(function () {
+    console.log("Document successfully deleted!");
+  }).catch(function (error) {
+    console.error("Error removing document: ", error);
+  });
+
+  firebase.firestore().collection('trip/' + tripID + '/days/' + dayID + '/activities').doc().set(data)
+    .then(function () {
+      console.log("Document successfully written!");
+    })
+    .catch(function (error) {
+      console.error("Error writing document: ", error);
+    });
 }
