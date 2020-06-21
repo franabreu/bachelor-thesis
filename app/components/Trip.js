@@ -88,6 +88,13 @@ export default class Trip extends React.Component {
                     </Text>
                 </TouchableOpacity>
 
+                <TouchableOpacity style={styles.expensesButton}
+                    onPress={() => this.props.navigation.navigate('DaysList', { tripID: this.state.tripID, diary: true })}>
+                    <Text>
+                        Diario
+                    </Text>
+                </TouchableOpacity>
+
                 <TouchableOpacity onPress={() => Alert.alert(
                     'Dar de baja',
                     '¿Está seguro de que desea eliminar este viaje?',
