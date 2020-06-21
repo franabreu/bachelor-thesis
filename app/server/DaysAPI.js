@@ -14,6 +14,8 @@ export async function getDaysByTripId(tripID, onDaysReceived) {
     const dayItem = doc.data();
     dayItem.dayID = doc.id;
     dayItem.date = doc.data().date.toDate();
+    dayItem.diaryTitle = doc.data().diaryTitle;
+    dayItem.diaryText = doc.data().diaryText;
 
     daysList.push(dayItem);
   });
@@ -69,4 +71,21 @@ export async function updateActivity(data, tripID, dayID, activityID) {
     .catch(function (error) {
       console.error("Error writing document: ", error);
     });
+}
+
+export async function updateDiary(data, tripID, dayID, diaryTitle, diaryText) {
+
+  firebase.firestore().collection('trip/' + tripID + '/days').doc(dayID).update(
+    {
+      diaryTitle: diaryTitle.toString(),
+      diaryText: diaryText.toString()
+    }
+  )
+  .then(function () {
+    console.log("Document successfully updated!");
+    return true;
+  }).catch(function (error) {
+    console.error("Error updating document: ", error);
+    return false;
+  });
 }

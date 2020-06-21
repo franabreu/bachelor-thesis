@@ -14,17 +14,25 @@ import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import 'moment/locale/es'
 var moment = require('moment');
 
-function Item({ tripID, dayID, date, navigation }) {
+function Item({ tripID, dayID, date, diary, diaryTitle, diaryText, navigation }) {
 
     moment.locale('es');
     var dayDate = moment(date).locale('es').format('LL');
 
     return (
         <View style={styles.item}>
-            <TouchableOpacity onPress={() =>
-                navigation.navigate('ActivitiesList', { tripID: tripID, dayID: dayID, date: date })}>
-                <Text style={styles.dayText}>{dayDate} </Text>
-            </TouchableOpacity>
+
+            {diary ?
+                <TouchableOpacity onPress={() =>
+                    navigation.navigate('DiaryEntry', { tripID: tripID, dayID: dayID, date: date, diaryTitle: diaryTitle, diaryText: diaryText })}>
+                    <Text style={styles.dayText}>{dayDate} </Text>
+                </TouchableOpacity>
+                :
+                <TouchableOpacity onPress={() =>
+                    navigation.navigate('ActivitiesList', { tripID: tripID, dayID: dayID, date: date })}>
+                    <Text style={styles.dayText}>{dayDate} </Text>
+                </TouchableOpacity>
+            }
         </View>
     );
 }
@@ -35,7 +43,8 @@ export default class DaysList extends React.Component {
         daysList: [],
         tripID: '',
         dayID: '',
-        trip: ''
+        trip: '',
+        diary: false
     }
 
     onDaysReceived = (daysList
@@ -47,7 +56,11 @@ export default class DaysList extends React.Component {
 
     componentDidMount() {
         const tripID = this.props.navigation.state.params.tripID
+        const diary = this.props.navigation.state.params.diary
         this.setState({ tripID: tripID });
+        if (diary == true) {
+            this.setState({ diary: diary });
+        }
 
         getDaysByTripId(tripID, this.onDaysReceived)
     }
@@ -68,6 +81,9 @@ export default class DaysList extends React.Component {
                             tripID={this.state.tripID}
                             dayID={item.dayID}
                             date={item.date}
+                            diary={this.state.diary}
+                            diaryTitle={item.diaryTitle}
+                            diaryText={item.diaryText}
                             navigation={this.props.navigation} />}
                         keyExtractor={item => item.id}
                     />

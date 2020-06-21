@@ -16,7 +16,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import ValidationComponent from 'react-native-form-validator';
 
-import { uploadActivity, updateActivity } from '../server/DaysAPI';
+import { updateDiary } from '../server/DaysAPI';
 
 /* import * as firebase from 'firebase'; */
 
@@ -28,7 +28,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import 'moment/locale/es'
 var moment = require('moment');
 
-export default class ActivityForm extends ValidationComponent {
+export default class DiaryEntry extends ValidationComponent {
     static navigationOptions = {
         headerShown: false
     };
@@ -38,48 +38,56 @@ export default class ActivityForm extends ValidationComponent {
     state = {
         tripID: '',
         dayID: '',
-        activityID: null,
-        name: '',
-        note: '',
-        time: new Date(),
-        errorMessage: null
+        diaryTitle: '',
+        diaryText: '',
+        date: null,
+        errorMessage: null,
+        updateMessage: null
     }
 
     componentDidMount() {
         const tripID = this.props.navigation.state.params.tripID
         const dayID = this.props.navigation.state.params.dayID
-        const time = this.props.navigation.state.params.date
+        const date = this.props.navigation.state.params.date
         this.setState({ tripID: tripID });
         this.setState({ dayID: dayID });
-        this.setState({ time: time });
 
-        var activity = this.props.navigation.state.params.activity;
-        if (activity != null) {
-            this.setState({ activityID: activity.activityID, name: activity.name, note: activity.note, time: activity.time });
+        moment.locale('es');
+        var dayDate = moment(date).locale('es').format("ll");
+        this.setState({ date: dayDate });
+
+        var diaryTitle = this.props.navigation.state.params.diaryTitle;
+        var diaryText = this.props.navigation.state.params.diaryText;
+        if (diaryTitle != null) {
+            this.setState({ diaryTitle: diaryTitle });
+        }
+        if (diaryText != null) {
+            this.setState({ diaryText: diaryText });
         }
     }
 
     handleSubmit = () => {
 
         var data = {
-            name: this.state.name,
-            note: this.state.note,
-            time: this.state.time
+            diaryTitle: this.state.diaryTitle,
+            diaryText: this.state.diaryText,
+            date: this.state.date
         }
 
         this.validate({
-            name: { minlength: 1, maxlength: 40, required: true },
-            note: { minlength: 1, maxlength: 500, required: false },
-            time: { required: true }
+            diaryTitle: { minlength: 1, maxlength: 40, required: true },
+            diaryText: { minlength: 1, maxlength: 10000, required: true },
+            date: { required: true }
         });
 
         if (this.isFormValid()) {
-            if (this.state.activityID == null) {
-                uploadActivity(data, this.state.tripID, this.state.dayID);
+            var res = updateDiary(data, this.state.tripID, this.state.dayID, this.state.diaryTitle, this.state.diaryText);
+            if (res) {
+                this.setState({ updateMessage: 'El diario se ha actualizado correctamente' });
             } else {
-                updateActivity(data, this.state.tripID, this.state.dayID, this.state.activityID);
+                this.setState({ errorMessage: 'Ha ocurrido un error al actualizar el diario' });
             }
-            this.props.navigation.navigate('ActivitiesList', { tripID: this.state.tripID, dayID: this.state.dayID });
+            /* this.props.navigation.navigate('DiaryEntry', { tripID: this.state.tripID, dayID: this.state.dayID }); */
         }
     }
 
@@ -91,7 +99,7 @@ export default class ActivityForm extends ValidationComponent {
                     <StatusBar barStyle='light-content'></StatusBar>
 
                     <Text style={styles.greeting}>
-                        {'Añadir actividad'}
+                        {'Día ' + this.state.date}
                     </Text>
 
                     <Text style={styles.errorMessage}>
@@ -100,35 +108,30 @@ export default class ActivityForm extends ValidationComponent {
 
                     <View style={styles.form}>
                         <View>
-                            <Text style={styles.inputTitle}>Nombre</Text>
+                            <Text style={styles.inputTitle}>Título</Text>
                             <TextInput style={styles.textInput}
                                 autoCapitalize='none'
-                                onChangeText={name => this.setState({ name })}
-                                value={this.state.name}>
+                                onChangeText={diaryTitle => this.setState({ diaryTitle })}
+                                value={this.state.diaryTitle}>
                             </TextInput>
                         </View>
 
                         <View>
-                            <Text style={styles.inputTitle}>Nota</Text>
+                            <Text style={styles.inputTitle}>Texto</Text>
                             <TextInput style={styles.textInput}
                                 autoCapitalize='none'
-                                onChangeText={note => this.setState({ note })}
-                                value={this.state.note}>
+                                multiline={true}
+                                onChangeText={diaryText => this.setState({ diaryText })}
+                                value={this.state.diaryText}>
                             </TextInput>
                         </View>
-
-                        <View>
-                            <Text style={styles.inputTitle}>Hora</Text>
-                            <DateTimePicker
-                                value={this.state.time}
-                                mode='time'
-                                onChange={(event, value) => { this.setState({ time: value }); }}>
-                            </DateTimePicker>
-                        </View>
-
 
                         <Text style={styles.error}>
                             {this.getErrorMessages()}
+                        </Text>
+
+                        <Text style={styles.update}>
+                            {this.state.updateMessage && <Text style={styles.update}>{this.state.updateMessage}</Text>}
                         </Text>
 
                         <View style={styles.inputTitle}>
@@ -137,19 +140,6 @@ export default class ActivityForm extends ValidationComponent {
                             </TouchableOpacity>
                         </View>
 
-                        {this.state.activity != null ?
-                            <TouchableOpacity onPress={() => Alert.alert(
-                                'Dar de baja',
-                                '¿Está seguro de que desea eliminar este viaje?',
-                                [
-                                    { text: 'No', onPress: () => null, style: 'cancel' },
-                                    { text: 'Sí', onPress: () => this.deleteActivity(this.state.tripID, this.state.dayID, this.state.activityID) },
-                                ]
-                            )}>
-                                <Text style={styles.text}>Eliminar actividad</Text>
-                            </TouchableOpacity>
-                            : null
-                        }
                     </View>
                 </View>
             </ScrollView>
@@ -176,6 +166,19 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     errorMessage: {
+        height: 72,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 30
+    },
+    update: {
+        color: 'green',
+        fontSize: 13,
+        fontWeight: '600',
+        textAlign: 'center'
+    },
+    updateMessage: {
+        color: 'green',
         height: 72,
         alignItems: 'center',
         justifyContent: 'center',
