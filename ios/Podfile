@@ -79,6 +79,7 @@ target 'tfg' do
 
   pod 'Firebase/Analytics'
   pod 'Firebase/Performance'
+  pod 'Firebase/Storage'
 
   target 'tfgTests' do
     inherit! :complete

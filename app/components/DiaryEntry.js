@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     StatusBar,
     Picker,
-    Button
+    Button,
+    Image
 } from 'react-native';
 
 import { CheckBox, SearchBar } from 'react-native-elements'
@@ -16,6 +17,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 import ValidationComponent from 'react-native-form-validator';
 
+import ImagePicker from 'react-native-image-picker';
+
 import { updateDiary } from '../server/DaysAPI';
 
 /* import * as firebase from 'firebase'; */
@@ -23,10 +26,21 @@ import { updateDiary } from '../server/DaysAPI';
 import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
 import "@react-native-firebase/firestore";
+import storage from '@react-native-firebase/storage';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import 'moment/locale/es'
 var moment = require('moment');
+
+const reference = storage().ref();
+
+const options = {
+    title: 'Select Image',
+    storageOptions: {
+        skipBackup: true,
+        path: 'images'
+    }
+};
 
 export default class DiaryEntry extends ValidationComponent {
     static navigationOptions = {
@@ -34,6 +48,7 @@ export default class DiaryEntry extends ValidationComponent {
     };
 
     deviceLocale = "es"
+    reference = storage().ref();
 
     state = {
         tripID: '',
@@ -42,7 +57,9 @@ export default class DiaryEntry extends ValidationComponent {
         diaryText: '',
         date: null,
         errorMessage: null,
-        updateMessage: null
+        updateMessage: null,
+        imgSource: '',
+        selectedImage: ''
     }
 
     componentDidMount() {
@@ -91,6 +108,66 @@ export default class DiaryEntry extends ValidationComponent {
         }
     }
 
+    /* pickImage = () => {
+        ImagePicker.launchImageLibrary({ title: 'Seleccione una foto', maxWidth: 800, maxHeight: 600 },
+            response => {
+                if (response.error) {
+                    console.log("Se ha producido un error");
+                } else {
+                    console.log("Foto: " + response.uri)
+                    this.uploadFile(response.uri)
+                }
+            }
+        )
+    }
+
+    uploadFile = (uri) => {
+        const task = reference.putFile(uri);
+
+        task.on('state_changed', taskSnapshot => {
+            console.log(`${taskSnapshot.bytesTransferred} transferred out of ${task.totalBytes}`);
+        });
+
+        task.then(() => {
+            console.log('Image uploaded to the bucket!');
+        });
+    } */
+
+    /* uriToBlob = (uri) => {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                // return the blob
+                resolve(xhr.response);
+            };
+
+            xhr.onerror = function () {
+                // something went wrong
+                reject(new Error('uriToBlob failed'));
+            };
+            // this helps us get a blob
+            xhr.responseType = 'blob';
+            xhr.open('GET', uri, true);
+
+            xhr.send(null);
+        });
+    }
+
+    uploadToFirebase = (blob) => {
+        return new Promise((resolve, reject) => {
+            var storageRef = firebase.storage().ref();
+            storageRef.child('uploads/photo.jpg').put(blob, {
+                contentType: 'image/jpeg'
+            }).then((snapshot) => {
+                blob.close();
+                resolve(snapshot);
+            }).catch((error) => {
+                reject(error);
+            });
+        });
+    } */
+
+
     render() {
         return (
             <ScrollView
@@ -124,6 +201,15 @@ export default class DiaryEntry extends ValidationComponent {
                                 onChangeText={diaryText => this.setState({ diaryText })}
                                 value={this.state.diaryText}>
                             </TextInput>
+                        </View>
+
+                        <View>
+                            <Image source={this.state.selectedImage}></Image>
+                        </View>
+                        <View>
+                            <Button title="Añadir imagen"
+                                style={styles.btnTxt}>
+                            </Button>
                         </View>
 
                         <Text style={styles.error}>
@@ -271,5 +357,17 @@ const styles = StyleSheet.create({
         height: 30,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    btn: {
+        borderWidth: 0,
+        paddingTop: 10,
+        paddingBottom: 10,
+        borderRadius: 20,
+        borderColor: '#3399ff',
+        backgroundColor: '#3399ff'
+    },
+    btnTxt: {
+        alignSelf: 'center',
+        color: 'black'
     },
 });
