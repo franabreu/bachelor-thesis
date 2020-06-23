@@ -15,7 +15,7 @@ export async function getTrips(tripsRetreived) {
   var snapshot = await firebase.firestore()
     .collection('trip')
     .where('public', '==', true)
-    .orderBy('title')
+    .orderBy('startDate', 'desc')
     .get()
 
   snapshot.forEach((doc) => {
@@ -23,8 +23,8 @@ export async function getTrips(tripsRetreived) {
     tripItem.id = doc.id;
     tripItem.title = doc.data().title;
     tripItem.description = doc.data().description;
-    tripItem.startDate = doc.data().startDate;
-    tripItem.endDate = doc.data().endDate;
+    tripItem.startDate = doc.data().startDate.toDate();
+    tripItem.endDate = doc.data().endDate.toDate();
     tripList.push(tripItem);
   });
 
