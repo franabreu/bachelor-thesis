@@ -28,6 +28,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import 'moment/locale/es'
 var moment = require('moment');
 
+const categoryEnum = ['Transporte', 'Atracción', 'Museo', 'Comida', 'Fiesta', 'Otro'];
+
 export default class ActivityForm extends ValidationComponent {
     static navigationOptions = {
         headerShown: false
@@ -42,6 +44,7 @@ export default class ActivityForm extends ValidationComponent {
         name: '',
         note: '',
         time: new Date(),
+        category: 'Transporte',
         errorMessage: null
     }
 
@@ -55,7 +58,7 @@ export default class ActivityForm extends ValidationComponent {
 
         var activity = this.props.navigation.state.params.activity;
         if (activity != null) {
-            this.setState({ activityID: activity.activityID, name: activity.name, note: activity.note, time: activity.time });
+            this.setState({ activityID: activity.activityID, name: activity.name, note: activity.note, time: activity.time, category: activity.category });
         }
     }
 
@@ -64,13 +67,15 @@ export default class ActivityForm extends ValidationComponent {
         var data = {
             name: this.state.name,
             note: this.state.note,
-            time: this.state.time
+            time: this.state.time,
+            category: this.state.category
         }
 
         this.validate({
             name: { minlength: 1, maxlength: 40, required: true },
             note: { minlength: 1, maxlength: 500, required: false },
-            time: { required: true }
+            time: { required: true },
+            category: { required: true }
         });
 
         if (this.isFormValid()) {
@@ -124,6 +129,22 @@ export default class ActivityForm extends ValidationComponent {
                                 mode='time'
                                 onChange={(event, value) => { this.setState({ time: value }); }}>
                             </DateTimePicker>
+                        </View>
+
+                        <View>
+                            <Text style={styles.inputTitle}>Categoría</Text>
+                            <View>
+                                <Picker
+                                    selectedValue={this.state.category}
+                                    style={styles.picker}
+                                    onValueChange={(itemValue, itemIndex) =>
+                                        this.setState({ category: itemValue })
+                                    }>
+                                    {categoryEnum.map((item, index) => {
+                                        return (<Picker.Item label={item} value={item} key={index} />)
+                                    })}
+                                </Picker>
+                            </View>
                         </View>
 
 

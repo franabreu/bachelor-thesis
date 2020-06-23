@@ -28,16 +28,7 @@ export default class Profile extends React.Component {
     state = {
         email: "",
         displayName: "",
-        photoURL: "",
         currency: "",
-        data: [
-            {
-                code: "EUR"
-            },
-            {
-                code: "USA"
-            }
-        ],
         currencyList: []
     }
 
@@ -49,7 +40,7 @@ export default class Profile extends React.Component {
 
     componentDidMount() {
         const { email, displayName, photoURL } = firebase.auth().currentUser;
-        this.setState({ email, displayName, photoURL });
+        this.setState({ email, displayName });
         this.setState({ currency: photoURL })
 
         getCurrency(this.onCurrencyReceived);

@@ -47,8 +47,7 @@ export default class DaysList extends React.Component {
         diary: false
     }
 
-    onDaysReceived = (daysList
-    ) => {
+    onDaysReceived = (daysList) => {
         this.setState(prevState => ({
             daysList: prevState.daysList = daysList
         }));

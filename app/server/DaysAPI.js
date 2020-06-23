@@ -37,6 +37,7 @@ export async function getActivitiesByDayId(tripID, dayID, onActivitiesReceived) 
     activityItem.name = doc.data().name;
     activityItem.note = doc.data().note;
     activityItem.time = doc.data().time.toDate();
+    activityItem.category = doc.data().category;
 
     activitiesList.push(activityItem);
   });
@@ -81,11 +82,11 @@ export async function updateDiary(data, tripID, dayID, diaryTitle, diaryText) {
       diaryText: diaryText.toString()
     }
   )
-  .then(function () {
-    console.log("Document successfully updated!");
-    return true;
-  }).catch(function (error) {
-    console.error("Error updating document: ", error);
-    return false;
-  });
+    .then(function () {
+      console.log("Document successfully updated!");
+      return true;
+    }).catch(function (error) {
+      console.error("Error updating document: ", error);
+      return false;
+    });
 }

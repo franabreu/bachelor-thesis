@@ -14,7 +14,7 @@ import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import 'moment/locale/es'
 var moment = require('moment');
 
-function Item({ tripID, dayID, name, note, time, activity, navigation }) {
+function Item({ tripID, dayID, name, note, time, category, activity, navigation }) {
 
     moment.locale('es');
     var actTime = moment(time).locale('es').format("hh:mm A");
@@ -23,8 +23,8 @@ function Item({ tripID, dayID, name, note, time, activity, navigation }) {
         <View style={styles.item}>
             <TouchableOpacity onPress={() =>
                 navigation.navigate('ActivityForm', { tripID: tripID, dayID: dayID, activity: activity })}>
-                <Text style={styles.activityText}>{actTime} - {name}</Text>
-                <Text style={styles.activityText2}>{note} </Text>
+                <Text style={styles.activityText}>{actTime} ({category}) - {name}</Text>
+            <Text style={styles.activityText2}>{note} </Text>
             </TouchableOpacity>
         </View>
     );
@@ -82,6 +82,7 @@ export default class ActivitiesList extends React.Component {
                             name={item.name}
                             note={item.note}
                             time={item.time}
+                            category={item.category}
                             activity={item}
                             navigation={this.props.navigation} />}
                         keyExtractor={item => item.id}
