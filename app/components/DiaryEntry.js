@@ -58,8 +58,9 @@ export default class DiaryEntry extends ValidationComponent {
         date: null,
         errorMessage: null,
         updateMessage: null,
-        imgSource: '',
-        selectedImage: ''
+        uri: {
+            uri: ''
+        }
     }
 
     componentDidMount() {
@@ -108,20 +109,20 @@ export default class DiaryEntry extends ValidationComponent {
         }
     }
 
-    /* pickImage = () => {
+    pickImage = () => {
         ImagePicker.launchImageLibrary({ title: 'Seleccione una foto', maxWidth: 800, maxHeight: 600 },
             response => {
                 if (response.error) {
                     console.log("Se ha producido un error");
                 } else {
-                    console.log("Foto: " + response.uri)
-                    this.uploadFile(response.uri)
+                    console.log("Uri: " + response.uri)
+                    this.setState({ uri: { ...this.state.uri, uri: response.uri} })
                 }
             }
         )
     }
 
-    uploadFile = (uri) => {
+    /*  uploadFile = (uri) => {
         const task = reference.putFile(uri);
 
         task.on('state_changed', taskSnapshot => {
@@ -203,12 +204,15 @@ export default class DiaryEntry extends ValidationComponent {
                             </TextInput>
                         </View>
 
-                        <View>
-                            <Image source={this.state.selectedImage}></Image>
-                        </View>
+
+                        <Image source={this.state.uri}
+                            style={{ width: 100, height: 100 }}
+                        />
+
                         <View>
                             <Button title="Añadir imagen"
-                                style={styles.btnTxt}>
+                                style={styles.btnTxt}
+                                onPress={this.pickImage}>
                             </Button>
                         </View>
 
