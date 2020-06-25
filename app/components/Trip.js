@@ -96,7 +96,7 @@ export default class Trip extends React.Component {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => Alert.alert(
-                    'Dar de baja',
+                    'Eliminar viaje',
                     '¿Está seguro de que desea eliminar este viaje?',
                     [
                         { text: 'No', onPress: () => null, style: 'cancel' },

@@ -117,6 +117,7 @@ export default class ActivityForm extends ValidationComponent {
                             <Text style={styles.inputTitle}>Nota</Text>
                             <TextInput style={styles.textInput}
                                 autoCapitalize='none'
+                                multiline={true}
                                 onChangeText={note => this.setState({ note })}
                                 value={this.state.note}>
                             </TextInput>
