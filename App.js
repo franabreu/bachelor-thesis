@@ -65,6 +65,7 @@ if (!global.btoa) { global.btoa = encode; }
 if (!global.atob) { global.atob = decode; } */
 
 // Ignores the warning of a deprecated method thar will be added back
+console.disableYellowBox = true;
 YellowBox.ignoreWarnings(['VirtualizedLists should never be nested inside plain ScrollViews', 'Animated: `useNativeDriver`', 'Picker has been extracted', 'onAnimatedValueUpdate', 'componentWillReceiveProps has been renamed', 'unique "key" prop']);
 
 /* if(__DEV__) {

@@ -23,7 +23,7 @@ import { updateDiary } from '../server/DaysAPI';
 
 /* import * as firebase from 'firebase'; */
 
-import firebase from '@react-native-firebase/app';
+import { firebase, utils } from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
 import "@react-native-firebase/firestore";
 import storage from '@react-native-firebase/storage';
@@ -41,6 +41,12 @@ const options = {
         path: 'images'
     }
 };
+
+async function getPathForFirebaseStorage(uri) {
+    if (IS_IOS) return uri
+    const stat = await RNFetchBlob.fs.stat(uri)
+    return stat.path
+}
 
 export default class DiaryEntry extends ValidationComponent {
     static navigationOptions = {
@@ -116,58 +122,24 @@ export default class DiaryEntry extends ValidationComponent {
                     console.log("Se ha producido un error");
                 } else {
                     console.log("Uri: " + response.uri)
-                    this.setState({ uri: { ...this.state.uri, uri: response.uri} })
+                    this.setState({ uri: { ...this.state.uri, uri: response.uri } })
+
+
+                    let reference = firebase.storage().ref('/images/' + this.state.dayID + '/' + response.uri);
+                    const pathToFile = `${response.uri}`;
+                    const task = reference.putFile(pathToFile);
+
+                    task.on('state_changed', taskSnapshot => {
+                        console.log(`${taskSnapshot.bytesTransferred} transferred out of ${taskSnapshot.totalBytes}`);
+                    });
+
+                    task.then(() => {
+                        console.log('Image uploaded to the bucket!');
+                    });
                 }
             }
         )
     }
-
-    /*  uploadFile = (uri) => {
-        const task = reference.putFile(uri);
-
-        task.on('state_changed', taskSnapshot => {
-            console.log(`${taskSnapshot.bytesTransferred} transferred out of ${task.totalBytes}`);
-        });
-
-        task.then(() => {
-            console.log('Image uploaded to the bucket!');
-        });
-    } */
-
-    /* uriToBlob = (uri) => {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                // return the blob
-                resolve(xhr.response);
-            };
-
-            xhr.onerror = function () {
-                // something went wrong
-                reject(new Error('uriToBlob failed'));
-            };
-            // this helps us get a blob
-            xhr.responseType = 'blob';
-            xhr.open('GET', uri, true);
-
-            xhr.send(null);
-        });
-    }
-
-    uploadToFirebase = (blob) => {
-        return new Promise((resolve, reject) => {
-            var storageRef = firebase.storage().ref();
-            storageRef.child('uploads/photo.jpg').put(blob, {
-                contentType: 'image/jpeg'
-            }).then((snapshot) => {
-                blob.close();
-                resolve(snapshot);
-            }).catch((error) => {
-                reject(error);
-            });
-        });
-    } */
-
 
     render() {
         return (
