@@ -8,7 +8,8 @@ import {
     StatusBar,
     Picker,
     Button,
-    Image
+    Image,
+    FlatList
 } from 'react-native';
 
 import { CheckBox, SearchBar } from 'react-native-elements'
@@ -19,7 +20,7 @@ import ValidationComponent from 'react-native-form-validator';
 
 import ImagePicker from 'react-native-image-picker';
 
-import { updateDiary } from '../server/DaysAPI';
+import { updateDiary, uploadImagePath, getImagesByDayId } from '../server/DaysAPI';
 
 /* import * as firebase from 'firebase'; */
 
@@ -48,25 +49,60 @@ async function getPathForFirebaseStorage(uri) {
     return stat.path
 }
 
+function makeImageName(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+async function Item({ path }) {
+
+    /* const reference = firebase.storage().ref(path); */
+    /* const url = await reference.getDownloadURL(); */
+    /* console.log('URL: ' + JSON.stringify(url)) */
+
+    /* const url = firebase.storage()
+        .ref(path)
+        .getDownloadURL(); */
+
+    return (
+        <View style={styles.item}>
+            {/* <Image source={ url.toString() }
+                style={{ width: 100, height: 100 }}
+            /> */}
+        </View>
+    );
+}
+
 export default class DiaryEntry extends ValidationComponent {
     static navigationOptions = {
         headerShown: false
     };
 
     deviceLocale = "es"
-    reference = storage().ref();
 
     state = {
         tripID: '',
         dayID: '',
         diaryTitle: '',
         diaryText: '',
+        imagesList: [],
         date: null,
         errorMessage: null,
         updateMessage: null,
         uri: {
             uri: ''
         }
+    }
+
+    onImagesReceived = (imagesList) => {
+        this.setState(prevState => ({
+            imagesList: prevState.imagesList = imagesList
+        }));
     }
 
     componentDidMount() {
@@ -88,6 +124,8 @@ export default class DiaryEntry extends ValidationComponent {
         if (diaryText != null) {
             this.setState({ diaryText: diaryText });
         }
+
+        getImagesByDayId(tripID, dayID, this.onImagesReceived)
     }
 
     handleSubmit = () => {
@@ -124,8 +162,8 @@ export default class DiaryEntry extends ValidationComponent {
                     console.log("Uri: " + response.uri)
                     this.setState({ uri: { ...this.state.uri, uri: response.uri } })
 
-
-                    let reference = firebase.storage().ref('/images/' + this.state.dayID + '/' + response.uri);
+                    var imageID = makeImageName(10);
+                    let reference = firebase.storage().ref('/images/' + this.state.dayID + '/' + imageID);
                     const pathToFile = `${response.uri}`;
                     const task = reference.putFile(pathToFile);
 
@@ -136,6 +174,12 @@ export default class DiaryEntry extends ValidationComponent {
                     task.then(() => {
                         console.log('Image uploaded to the bucket!');
                     });
+
+                    var data = {
+                        path: '/images/' + this.state.dayID + '/' + imageID
+                    }
+
+                    uploadImagePath(data, this.state.tripID, this.state.dayID);
                 }
             }
         )
@@ -176,9 +220,13 @@ export default class DiaryEntry extends ValidationComponent {
                             </TextInput>
                         </View>
 
-
-                        <Image source={this.state.uri}
-                            style={{ width: 100, height: 100 }}
+                        <FlatList
+                            data={this.state.imagesList}
+                            renderItem={({ item }) => <Item style={styles.item}
+                                tripID={this.state.tripID}
+                                path={item.path}
+                                navigation={this.props.navigation} />}
+                            keyExtractor={item => item.id}
                         />
 
                         <View>

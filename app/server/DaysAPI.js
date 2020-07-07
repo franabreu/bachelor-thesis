@@ -90,3 +90,33 @@ export async function updateDiary(data, tripID, dayID, diaryTitle, diaryText) {
       return false;
     });
 }
+
+export async function getImagesByDayId(tripID, dayID, onImagesReceived) {
+
+  var imagesList = [];
+
+  var snapshot = await firebase.firestore().collection("trip/" + tripID + "/days/" + dayID + "/images")
+    .get();
+
+  snapshot.forEach((doc) => {
+    const imageItem = doc.data();
+    imageItem.activityID = doc.id;
+    imageItem.path = doc.data().path;
+
+    imagesList.push(imageItem);
+  });
+
+  onImagesReceived(imagesList);
+}
+
+export async function uploadImagePath(data, tripID, dayID) {
+
+  firebase.firestore().collection('trip/' + tripID + '/days/' + dayID + '/images').doc().set(data)
+    .then(function () {
+      console.log("Document successfully written!");
+    })
+    .catch(function (error) {
+      console.error("Error writing document: ", error);
+    });
+
+}
