@@ -1,6 +1,7 @@
 import firebase from '@react-native-firebase/app';
 import "@react-native-firebase/auth";
 import "@react-native-firebase/firestore";
+import "@react-native-firebase/storage";
 
 export async function getDaysByTripId(tripID, onDaysReceived) {
 
@@ -100,9 +101,8 @@ export async function getImagesByDayId(tripID, dayID, onImagesReceived) {
 
   snapshot.forEach((doc) => {
     const imageItem = doc.data();
-    imageItem.activityID = doc.id;
-    imageItem.path = doc.data().path;
-
+    imageItem.imageID = doc.id;
+    imageItem.downloadURL = doc.data().downloadURL;
     imagesList.push(imageItem);
   });
 

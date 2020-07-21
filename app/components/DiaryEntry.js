@@ -43,12 +43,6 @@ const options = {
     }
 };
 
-async function getPathForFirebaseStorage(uri) {
-    if (IS_IOS) return uri
-    const stat = await RNFetchBlob.fs.stat(uri)
-    return stat.path
-}
-
 function makeImageName(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -59,21 +53,12 @@ function makeImageName(length) {
     return result;
 }
 
-async function Item({ path }) {
-
-    /* const reference = firebase.storage().ref(path); */
-    /* const url = await reference.getDownloadURL(); */
-    /* console.log('URL: ' + JSON.stringify(url)) */
-
-    /* const url = firebase.storage()
-        .ref(path)
-        .getDownloadURL(); */
-
+function Item({ downloadURL }) {
     return (
         <View style={styles.item}>
-            {/* <Image source={ url.toString() }
-                style={{ width: 100, height: 100 }}
-            /> */}
+            <Image source={{ uri: downloadURL.toString() }}
+                style={styles.diaryImage}
+            />
         </View>
     );
 }
@@ -100,9 +85,7 @@ export default class DiaryEntry extends ValidationComponent {
     }
 
     onImagesReceived = (imagesList) => {
-        this.setState(prevState => ({
-            imagesList: prevState.imagesList = imagesList
-        }));
+        this.setState({ imagesList: imagesList });
     }
 
     componentDidMount() {
@@ -173,13 +156,18 @@ export default class DiaryEntry extends ValidationComponent {
 
                     task.then(() => {
                         console.log('Image uploaded to the bucket!');
+
+                        reference.getDownloadURL().then((url) => {
+                            var data = {
+                                path: '/images/' + this.state.dayID + '/' + imageID,
+                                downloadURL: url
+                            }
+
+                            uploadImagePath(data, this.state.tripID, this.state.dayID);
+                            this.componentDidMount();
+                        })
                     });
 
-                    var data = {
-                        path: '/images/' + this.state.dayID + '/' + imageID
-                    }
-
-                    uploadImagePath(data, this.state.tripID, this.state.dayID);
                 }
             }
         )
@@ -223,8 +211,7 @@ export default class DiaryEntry extends ValidationComponent {
                         <FlatList
                             data={this.state.imagesList}
                             renderItem={({ item }) => <Item style={styles.item}
-                                tripID={this.state.tripID}
-                                path={item.path}
+                                downloadURL={item.downloadURL}
                                 navigation={this.props.navigation} />}
                             keyExtractor={item => item.id}
                         />
@@ -394,4 +381,15 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         color: 'black'
     },
+    diaryImage: {
+        marginBottom: 10,
+        marginLeft: 16,
+        marginRight: 16,
+        flex: 1,
+        width: 320,
+        height: 200,
+        resizeMode: 'contain',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }
 });

@@ -130,6 +130,21 @@ const TripStack = createStackNavigator({
   },
 })
 
+const PublicTripStack = createStackNavigator({
+  PublicTrips: {
+    screen: TripList,
+    navigationOptions: {
+      headerShown: false
+    },
+  },
+  TripPublic: {
+    screen: TripPublic,
+    navigationOptions: {
+      headerShown: false
+    },
+  },
+})
+
 const AppTabNavigator = createBottomTabNavigator(
   {
     Inicio: {
@@ -145,7 +160,7 @@ const AppTabNavigator = createBottomTabNavigator(
       }
     },
     Viajes: {
-      screen: TripList,
+      screen: PublicTripStack,
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => <Icon name="explore" size={24} color={tintColor} />
       }
