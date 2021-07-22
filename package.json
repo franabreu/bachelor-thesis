@@ -20,7 +20,7 @@
     "firestore-export-import": "^0.5.0",
     "moment": "^2.25.3",
     "react": "16.11.0",
-    "react-native": "0.62.2",
+    "react-native": "0.62.3",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^1.2.7",
     "react-native-form-validator": "^0.3.2",
